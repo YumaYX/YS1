@@ -13,6 +13,7 @@ desc "Git Tag and Push"
 task :tag do
   vtag = "v#{Ys1::VERSION}"
   sh %(git tag #{vtag})
+  sh %(git push origin #{vtag})
 end
 
 # TEST

@@ -1,0 +1,41 @@
+name: Publish gem
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish_gem:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: jstastny/publish-gem-to-github@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          owner: ${{ github.repository_owner }}
+
+name: Ruby Gem
+on:
+  workflow_dispatch:
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+      - run: bundle install
+      - name: Setup git config
+        run: |
+          git config --global user.name "YumaYX"
+          git config --global user.email "86939129+YumaYX@users.noreply.github.com"
+      - name: Publish to RubyGems
+        run: bundle exec rake release
+    env:
+      GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
