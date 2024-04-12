@@ -8,23 +8,11 @@ docs
 
 ## Installation
 
-### Local Install
-
 ```sh
 gem build ys1.gemspec
 gem install ys1*.gem --local
 # or
 rake install:local
-```
-
-### Install with Gemfile
-
-in your Gemfile:
-
-```ruby
-source 'https://rubygems.pkg.github.com/YumaYX' do
-  gem 'ys1'
-end
 ```
 
 ## Usage

@@ -10,7 +10,7 @@ end
 
 # Git
 desc "Git Tag and Push"
-task :tag do
+task tag: :act do
   vtag = "v#{Ys1::VERSION}"
   sh %(git tag #{vtag})
   sh %(git push origin #{vtag})
@@ -18,11 +18,11 @@ end
 
 # TEST
 require "rake/testtask"
-task :test
 Rake::TestTask.new do |t|
   t.test_files = FileList["test/test_*.rb"]
   t.warning = true
 end
+task test: :clobber
 
 # RUBOCOP
 require "rubocop/rake_task"
@@ -36,9 +36,10 @@ YARD::Rake::YardocTask.new do |t|
   t.files = FileList.new %w[lib/*.rb lib/**/*.rb]
   t.options += ["--output-dir", "_site"]
 end
+task yard: :clobber
 
 # CLOBBER
 require "rake/clean"
-CLOBBER.include("testdata/csv_converter/*.json", "input", "_site")
+CLOBBER.include("testdata/csv_converter/*.json", "input", "_site", ".yardoc")
 
-task default: %i[test rubocop clobber yard]
+task default: %i[test rubocop yard]
