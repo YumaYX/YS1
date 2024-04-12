@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "ys1"
+require "rake"
+
+Ys1::Cmd.usage(__FILE__, "<\"CSV glob\">") unless ARGV.empty?
+
+FileList[ARGV].map do |file|
+  Ys1::CsvConverter.generate_json_file(file, format = :array)
+end

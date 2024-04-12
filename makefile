@@ -11,6 +11,7 @@ f:
 	-rake rubocop:autocorrect_all
 
 u:
+	chmod 755 exe/*
 	make test
 	make commit
 
