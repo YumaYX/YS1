@@ -3,9 +3,12 @@ default:
 
 .PHONY: test
 test:
-	-rake -T | grep unsafe | sh 
+	-rake rubocop:autocorrect_all
 	rake test
 	rake act
+
+f:
+	-rake rubocop:autocorrect_all
 
 u:
 	make test
