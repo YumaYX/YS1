@@ -43,7 +43,7 @@ class TestYs1CsvConverter < Minitest::Test
     filenames.map do |filename|
       Ys1::CsvConverter.generate_json_file(filename, :array)
 
-      assert_equal(expect_array, File.read("testdata/csv_converter/csv_to_json.json"))
+      assert_equal(expect_array, File.read("#{@test_input_dir}/csv_to_json.json"))
     end
   end
 
@@ -54,7 +54,7 @@ class TestYs1CsvConverter < Minitest::Test
       Ys1::CsvConverter.generate_json_file(filename, :hash)
       expect_hash = '{"Ruby":{"name":"Ruby","id":"0"},"Python":{"name":"Python","id":"1"}}'
 
-      assert_equal(expect_hash, File.read("testdata/csv_converter/csv_to_json.json"))
+      assert_equal(expect_hash, File.read("#{@test_input_dir}/csv_to_json.json"))
     end
   end
 end
