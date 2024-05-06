@@ -3,14 +3,17 @@ default:
 
 .PHONY: test
 test:
-	-rake rubocop:autocorrect_all
+	make fix
 	rake test
 	rake act
 
-f:
+init:
+	bundle install
+
+fix:
 	-rake rubocop:autocorrect_all
 
-u:
+update:
 	chmod 755 exe/*
 	make test
 	make commit
