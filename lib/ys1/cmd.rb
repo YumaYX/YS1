@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-# Ys1
-module Ys1
+# YS1
+module YS1
   # Cmd module
   module Cmd
     class << self

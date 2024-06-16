@@ -2,9 +2,9 @@
 
 require_relative "helper"
 
-class TestYs1ParentAndChild < Minitest::Test
+class TestYS1ParentAndChild < Minitest::Test
   def setup
-    @pac = Ys1::ParentAndChild.new("Parent")
+    @pac = YS1::ParentAndChild.new("Parent")
   end
 
   def test_add_child

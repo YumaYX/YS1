@@ -11,7 +11,7 @@ end
 # Git
 desc "Git Tag and Push"
 task tag: :act do
-  vtag = "v#{Ys1::VERSION}"
+  vtag = "v#{YS1::VERSION}"
   sh %(git tag #{vtag})
   sh %(git push origin #{vtag})
 end

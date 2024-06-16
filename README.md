@@ -22,7 +22,7 @@ in your codes:
 ```ruby
 require "ys1"
 
-array = Ys1::CsvConverter.csv_to_array("sample.csv")
+array = YS1::Csv.to_array("sample.csv")
 puts array
 ```
 

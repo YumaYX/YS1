@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Ys1
+module YS1
   # Represents a parent and its children in a family structure.
   class ParentAndChild
     # @return [Object] The parent object.
