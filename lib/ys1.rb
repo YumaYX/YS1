@@ -2,7 +2,7 @@
 
 require_relative "ys1/version"
 
-module Ys1
+module YS1
   class Error < StandardError; end
   # Your code goes here...
 end

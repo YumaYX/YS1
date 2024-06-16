@@ -2,7 +2,7 @@
 
 require_relative "parent_and_child"
 
-module Ys1
+module YS1
   # The Text module for handling text extraction and transformation.
   module Text
     class << self
@@ -17,7 +17,7 @@ module Ys1
         text.each_line do |line|
           line.chomp!
           if line =~ start_line
-            ref_array << Ys1::ParentAndChild.new(line)
+            ref_array << YS1::ParentAndChild.new(line)
           elsif ref_array.any?
             ref_array.last.add_child(line)
           end

@@ -3,17 +3,17 @@
 require "csv"
 require "json"
 
-# Ys1
-module Ys1
+# YS1
+module YS1
   # A module for converting CSV data to various formats.
-  module CsvConverter
+  module Csv
     class << self
       # Converts CSV data to a hash, using the first column as keys.
       #
       # @param csv_file_name [String] The name of the CSV file.
       # @return [Hash] The CSV data converted to a hash.
-      def csv_to_hash(csv_file_name)
-        csv_data = Ys1::CsvConverter.csv_read(csv_file_name)
+      def to_hash(csv_file_name)
+        csv_data = YS1::Csv.read(csv_file_name)
         hash = {}
         csv_data.each do |row|
           header_key = row.headers.first
@@ -27,15 +27,15 @@ module Ys1
       #
       # @param csv_file_name [String] The name of the CSV file.
       # @return [Array<Hash>] The CSV data converted to an array of hashes.
-      def csv_to_array(csv_file_name)
-        Ys1::CsvConverter.csv_read(csv_file_name).map(&:to_h)
+      def to_array(csv_file_name)
+        YS1::Csv.read(csv_file_name).map(&:to_h)
       end
 
       # Reads a CSV file and returns its content as a CSV::Table object.
       #
       # @param csv_file_name [String] The path to the CSV file.
       # @return [CSV::Table] The content of the CSV file as a CSV::Table object.
-      def csv_read(csv_file_name)
+      def read(csv_file_name)
         CSV.read(csv_file_name, encoding: "BOM|UTF-8", headers: true)
       end
 
@@ -46,7 +46,7 @@ module Ys1
       # @return [String] JSON file name
       def generate_json_file(filename, format = :array)
         output = "#{filename.gsub(/\.csv$/, "")}.json"
-        data = Ys1::CsvConverter.send("csv_to_#{format}", filename)
+        data = YS1::Csv.send("to_#{format}", filename)
         File.write(output, JSON.dump(data))
         output
       end

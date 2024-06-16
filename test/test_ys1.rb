@@ -2,4 +2,4 @@
 
 require_relative "helper"
 
-class TestYs1 < Minitest::Test; end
+class TestYS1 < Minitest::Test; end

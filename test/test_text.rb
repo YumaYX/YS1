@@ -2,7 +2,7 @@
 
 require_relative "helper"
 
-class TestYs1Text < Minitest::Test
+class TestYS1Text < Minitest::Test
   def setup
     @temporary_directory = Dir.mktmpdir
   end
@@ -13,7 +13,7 @@ class TestYs1Text < Minitest::Test
 
   def test_extract_with_mark
     file_content = "header0\ncontent0\nheader1\ncontent1\nheader2\ncontent2\n"
-    pacs = Ys1::Text.extract_with_mark(file_content, /header/)
+    pacs = YS1::Text.extract_with_mark(file_content, /header/)
     assert(!pacs.size.eql?(0))
     pacs.each_with_index do |pac, index|
       assert_equal("header#{index}", pac.parent)
@@ -22,7 +22,7 @@ class TestYs1Text < Minitest::Test
   end
 
   def test_extract_with_mark_no_hit
-    pacs = Ys1::Text.extract_with_mark("CONTENTS", /UNIQUE/)
+    pacs = YS1::Text.extract_with_mark("CONTENTS", /UNIQUE/)
     assert(pacs.size.eql?(0))
   end
 
@@ -31,7 +31,7 @@ class TestYs1Text < Minitest::Test
     file_content = "header0\ncontent0\nheader1\ncontent1\nheader2\ncontent2\n"
     File.write(temporary_file, file_content)
 
-    pacs = Ys1::Text.extract_with_mark_f(temporary_file, /header/)
+    pacs = YS1::Text.extract_with_mark_f(temporary_file, /header/)
     assert(!pacs.size.eql?(0))
     pacs.each_with_index do |pac, index|
       assert_equal(pac.parent, "header#{index}")
@@ -41,14 +41,14 @@ class TestYs1Text < Minitest::Test
 
   def test_lines_to_hash
     file_content = "key0 value0 0\nkey1 value1 1\n"
-    hash = Ys1::Text.lines_to_hash(file_content)
+    hash = YS1::Text.lines_to_hash(file_content)
     assert_equal(%w[key0 value0 0], hash["key0"])
     assert_equal(%w[key1 value1 1], hash["key1"])
   end
 
   def test_lines_to_hash_duplication
     e = assert_raises RuntimeError do
-      Ys1::Text.lines_to_hash("key a\nkey b")
+      YS1::Text.lines_to_hash("key a\nkey b")
     end
     assert_equal("Duplicate keys in lines: key", e.message)
   end
@@ -58,7 +58,7 @@ class TestYs1Text < Minitest::Test
     temporary_file = "#{@temporary_directory}/key_value.txt"
     File.write(temporary_file, file_content)
 
-    hash = Ys1::Text.lines_to_hash_f(temporary_file)
+    hash = YS1::Text.lines_to_hash_f(temporary_file)
     assert_equal(%w[key0 value0 0], hash["key0"])
     assert_equal(%w[key1 value1 1], hash["key1"])
   end
