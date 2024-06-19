@@ -42,19 +42,19 @@ class TestYS1Csv < Minitest::Test
 
     filenames.map do |filename|
       YS1::Csv.generate_json_file(filename, :array)
-
-      assert_equal(expect_array, File.read("#{@test_input_dir}/csv_to_json.json"))
+      output_name = filename.gsub(/.csv$/, ".json")
+      assert_equal(expect_array, File.read(output_name))
     end
   end
 
   def test_generate_json_file_array_hash
     filenames = Dir.glob("#{@test_input_dir}/*.csv")
+    expect_hash = '{"Ruby":{"name":"Ruby","id":"0"},"Python":{"name":"Python","id":"1"}}'
 
     filenames.map do |filename|
       YS1::Csv.generate_json_file(filename, :hash)
-      expect_hash = '{"Ruby":{"name":"Ruby","id":"0"},"Python":{"name":"Python","id":"1"}}'
-
-      assert_equal(expect_hash, File.read("#{@test_input_dir}/csv_to_json.json"))
+      output_name = filename.gsub(/.csv$/, ".json")
+      assert_equal(expect_hash, File.read(output_name))
     end
   end
 end

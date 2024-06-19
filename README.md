@@ -11,7 +11,11 @@ docs
 ```sh
 gem build ys1.gemspec
 gem install ys1*.gem --local
-# or
+```
+
+or
+
+```sh
 rake install:local
 ```
 
