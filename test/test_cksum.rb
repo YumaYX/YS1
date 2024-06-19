@@ -4,24 +4,20 @@ require_relative "helper"
 
 class TestYS1Cksum < Minitest::Test
   def setup
-    @temporary_directory = Dir.mktmpdir
-    result = `cksum * 2>/dev/null`
-    @cksum_file = "#{@temporary_directory}/cksum.txt"
-    File.write(@cksum_file, result)
-  end
-
-  def teardown
-    FileUtils.rm_rf(@temporary_directory) if File.exist?(@temporary_directory)
+    @x = YS1::Cksum.new("testdata/cksum/a")
+    @y = YS1::Cksum.new("testdata/cksum/b")
   end
 
   def test_hashnize
-    i = YS1::Cksum.new(@cksum_file)
-    list = i.hashnize
-    assert_equal(Integer, list["ys1.gemspec"].class)
+    sums = @x.hashnize
+    assert_equal("2418082923", sums["a"])
+    assert_equal("2454254050", sums["b"])
+    assert_equal("2475711845", sums["c"])
   end
 
   def test_compare
-    i = YS1::Cksum.new(@cksum_file)
-    assert(i.compare(i).empty?)
+    @x.hashnize
+    @y.hashnize
+    assert_equal(["b"], @y.compare(@x))
   end
 end

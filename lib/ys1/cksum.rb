@@ -25,23 +25,22 @@ module YS1
         parts = line.match(/^(\d+)\s+\d+\s+(.*)$/)
         # example: 523877570 1512 ys1.gemspec
 
-        sum_value = parts[1].to_i
+        sum_value = parts[1]
         file_name = prefix + parts[2].gsub(%r{^\./}, "")
-        @sums[file_name] = sum_value
+        @sums.store(file_name, sum_value)
       end
       @sums
     end
 
-    # Compares the current checksums with another Cksum object and extracts the differences.
+    # Compares the sums of files with another FileSums object and returns the file names
+    # that exist in both objects but have different sums.
     #
-    # @param [Cksum] another another Cksum object to compare against
-    # @return [Array<String>] the list of files with different checksums
+    # @param another [Cksum] The other Cksum object to compare with.
+    # @return [Array<String>] An array of file names that have different sums in the two objects.
     def compare(another)
-      diff = []
-      another.sums.each do |target_file_name, fsum|
-        diff << target_file_name if @sums.key?(target_file_name) && fsum != @sums[target_file_name]
+      @sums.keys.select do |file_name|
+        another.sums.key?(file_name) && (@sums[file_name] != another.sums[file_name])
       end
-      diff
     end
   end
 end
