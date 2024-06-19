@@ -32,7 +32,7 @@ module YS1
       @sums
     end
 
-    # Compares the sums of files with another FileSums object and returns the file names
+    # Compares the sums of files with another Cksum object and returns the file names
     # that exist in both objects but have different sums.
     #
     # @param another [Cksum] The other Cksum object to compare with.
