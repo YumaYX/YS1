@@ -1,7 +1,7 @@
 name: Publish gem
 
 on:
-  push:
+  workflow_dispatch:
     tags:
       - 'v*'
 jobs:
@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.3'
+          ruby-version: '3'
       - run: bundle install
       - name: Setup git config
         run: |
