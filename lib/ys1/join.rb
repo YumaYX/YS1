@@ -12,7 +12,7 @@ module YS1
       # @param right [Array<Hash>] The right array of hashes.
       # @param right_key [Symbol, String] The key to join on from the right array.
       # @return [Array<Hash>] The resulting array of hashes after the left join.
-      def lo_join(left, left_key, right, right_key)
+      def l_join(left, left_key, right, right_key)
         duplicates_values?(right, right_key)
 
         t_left = Marshal.load(Marshal.dump(left))
