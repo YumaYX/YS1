@@ -6,3 +6,7 @@ Style/StringLiterals:
 
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
+
+Security/MarshalLoad:
+  Exclude:
+    - lib/ys1/report.rb
