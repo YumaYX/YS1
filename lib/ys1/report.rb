@@ -20,10 +20,10 @@ module YS1
 
       # Loads a serialized object from a file.
       #
-      # @param input_name [String] The name of the file from which the object will be loaded.
+      # @param input_name [String] The name of the file from which the object will be loaded. Default is "obj.dat".
       #
       # @return [Object] The deserialized object.
-      def open(input_name)
+      def open(input_name = "obj.dat")
         data = File.read(input_name)
         Marshal.load(data)
       end

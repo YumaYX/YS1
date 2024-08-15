@@ -8,7 +8,9 @@ class TestYS1Report < Minitest::Test
   end
 
   def teardown
-    FileUtils.rm_rf(@temporary_directory) if File.exist?(@temporary_directory)
+    [@temporary_directory, "obj.dat"].map do |gabage|
+      FileUtils.rm_rf(gabage) if File.exist?(gabage)
+    end
   end
 
   def test_save_and_open
@@ -18,6 +20,14 @@ class TestYS1Report < Minitest::Test
     YS1::Report.save(hash, data_file)
 
     report = YS1::Report.open(data_file)
+    assert(report[:key])
+  end
+
+  def test_save_and_open_without_args
+    hash = { key: true }
+    YS1::Report.save(hash)
+
+    report = YS1::Report.open
     assert(report[:key])
   end
 end
