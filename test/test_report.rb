@@ -8,8 +8,8 @@ class TestYS1Report < Minitest::Test
   end
 
   def teardown
-    [@temporary_directory, "obj.dat"].map do |gabage|
-      FileUtils.rm_rf(gabage) if File.exist?(gabage)
+    [@temporary_directory, "obj.dat"].each do |garbage|
+      FileUtils.rm_rf(garbage) if File.exist?(garbage)
     end
   end
 
