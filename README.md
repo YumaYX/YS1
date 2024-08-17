@@ -6,6 +6,10 @@ home
 docs
 : <https://yumayx.github.io/YS1>
 
+## Description
+
+YS1 is an indispensable toolkit and concept designed to be both convenient and useful, which I won’t want to forget. This toolkit is particularly valuable for basic information processing. It improves efficiency and accuracy in handling and managing information across a range of tasks.
+
 ## Installation
 
 ```sh
