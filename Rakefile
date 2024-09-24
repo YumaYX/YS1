@@ -5,7 +5,11 @@ require "bundler/gem_tasks"
 # ACT
 desc "Test with act"
 task :act do
-  sh %(act -j test -W .github/workflows/test.yml --container-architecture linux/amd64)
+  if RUBY_PLATFORM.include?("arm64")
+    sh %(act -j test -W .github/workflows/test.yml --container-architecture linux/arm64)
+  else
+    sh %(sudo /root/bin/act -j test -W .github/workflows/test.yml)
+  end
 end
 
 # Git
@@ -37,6 +41,13 @@ YARD::Rake::YardocTask.new do |t|
   t.options += ["--output-dir", "_site"]
 end
 task yard: :clobber
+
+namespace :yard do
+  desc "Show YARD stats"
+  task :stat do
+    sh %(yard stats --list-undoc)
+  end
+end
 
 # CLOBBER
 require "rake/clean"
