@@ -10,3 +10,7 @@ Style/StringLiteralsInInterpolation:
 Security/MarshalLoad:
   Exclude:
     - lib/ys1/report.rb
+
+Metrics/AbcSize:
+  Exclude:
+    - lib/ys1/jtable.rb
