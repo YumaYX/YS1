@@ -23,9 +23,8 @@ module YS1
     # @return [Array<Array>] An array of arrays, where each inner array is a combination
     #   of values from different columns.
     def cross_join
-      array = @data.values
-      first = array.shift
-      first.product(*array)
+      first = array.first
+      first.product(*@data.values[1..])
     end
 
     # Adds data to a specified column in the table.
