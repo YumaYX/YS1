@@ -23,7 +23,7 @@ module YS1
     # @return [Array<Array>] An array of arrays, where each inner array is a combination
     #   of values from different columns.
     def cross_join
-      first = array.first
+      first = @data.values.first
       first.product(*@data.values[1..])
     end
 
@@ -42,16 +42,15 @@ module YS1
       # @param csv_file_name [String] The name of the CSV file to read.
       # @return [Hash{String => YS1::JTable}] A hash where keys are unique identifiers
       #   from the CSV and values are JTable instances representing the data.
-      def table_2_data(csv_file_name)
+      def to_h(csv_file_name)
         csv = YS1::Csv.read(csv_file_name)
         data_columns = csv.headers.to_a[1..] # Skip the first header
         all_data = Hash.new { |hash, key| hash[key] = YS1::JTable.new(data_columns) }
 
+        current = nil
         csv.each do |line|
           current = line.first.last || current
-          next unless current
-
-          line.to_a[1..].each { |col, val| all_data[current].add_data(col, val) if val }
+          line.to_a[1..].map { |col, val| all_data[current].add_data(col, val) if val }
         end
         all_data
       end
