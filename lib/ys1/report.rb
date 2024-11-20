@@ -27,6 +27,7 @@ module YS1
         data = File.read(input_name)
         Marshal.load(data)
       end
+      alias load open
     end
   end
 end
