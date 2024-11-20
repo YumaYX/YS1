@@ -45,7 +45,7 @@ module YS1
       # @param format [Symbol] The format to convert to (:hash or :array).
       # @return [String] JSON file name
       def generate_json_file(filename, format = :array)
-        output = "#{filename.gsub(/\.csv$/, "")}.json"
+        output = filename.gsub(/\.csv$/, ".json")
         data = YS1::Csv.send("to_#{format}", filename)
         File.write(output, JSON.dump(data))
         output
