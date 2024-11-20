@@ -33,7 +33,9 @@ module YS1
       # @return [Array] An array of ParentAndChild objects representing the extracted lines.
       def extract_with_mark_f(filename, start_line)
         array = []
-        File.foreach(filename) { |line| extract_with_mark(line, start_line, array) }
+        File.foreach(filename) do |line|
+          extract_with_mark(line, start_line, array)
+        end
         array
       end
 
@@ -65,7 +67,9 @@ module YS1
       # @return [Hash] The hash representing the converted lines.
       def lines_to_hash_f(filename, column_index = 0, delimiter = " ", duplex: false)
         hash = {}
-        File.foreach(filename) { |line| lines_to_hash(line, column_index, delimiter, hash, duplex: duplex) }
+        File.foreach(filename) do |line|
+          lines_to_hash(line, column_index, delimiter, hash, duplex: duplex)
+        end
         hash
       end
     end

@@ -4,7 +4,7 @@
 require "ys1"
 require "rake"
 
-YS1::Cmd.usage(__FILE__, "<\"CSV glob\">") if ARGV.empty?
+YS1::Cmd.usage(__FILE__, '<"CSV glob">') if ARGV.empty?
 
 FileList[ARGV].map do |file|
   YS1::Csv.generate_json_file(file, format = :array)

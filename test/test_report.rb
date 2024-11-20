@@ -30,4 +30,12 @@ class TestYS1Report < Minitest::Test
     report = YS1::Report.open
     assert(report[:key])
   end
+
+  def test_save_and_load_without_args
+    hash = { key: true }
+    YS1::Report.save(hash)
+
+    report = YS1::Report.load
+    assert(report[:key])
+  end
 end
