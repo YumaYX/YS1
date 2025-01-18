@@ -7,7 +7,7 @@ require "json"
 module YS1
   # The Http class handles HTTP GET requests and processes responses.
   class Http
-    attr_reader :uri, :response, :url, :http
+    attr_reader :response, :url, :http
 
     # Initializes the Http client with a given URI.
     # @param uri [String] The URI for the HTTP request.
