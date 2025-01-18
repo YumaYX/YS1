@@ -12,7 +12,7 @@ module YS1
       # @return [void] This method does not return, as it exits the program.
       def usage(command, *args)
         message = "Usage:\n  #{File.basename(command)}"
-        message += " #{args.join(' ')}" unless args.empty?
+        message += " #{args.join(" ")}" unless args.empty?
         warn message
         exit 1
       end
