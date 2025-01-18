@@ -22,7 +22,6 @@ module YS1
     def request
       request = Net::HTTP::Get.new(@url)
       @response = @http.request(request)
-      @response_body = @response.body
       self
     end
 
@@ -37,7 +36,7 @@ module YS1
     # @return [Object] The parsed JSON data.
     def json_to_data
       request
-      JSON.parse(@response_body)
+      JSON.parse(@response.body)
     end
   end
 end
