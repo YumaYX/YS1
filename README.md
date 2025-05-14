@@ -23,6 +23,15 @@ or
 rake install:local
 ```
 
+or
+
+```sh
+cat <<'GEMFILEEOF' >> Gemfile
+gem 'ys1', git: 'https://github.com/YumaYX/YS1.git'
+GEMFILEEOF
+bundle install
+```
+
 ## Usage
 
 in your codes:
