@@ -38,6 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "csv"
   spec.add_dependency "minitest"
   spec.add_dependency "rake"
+  spec.add_dependency "rdoc"
   spec.add_dependency "rubocop"
   spec.add_dependency "yard"
 
