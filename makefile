@@ -5,7 +5,7 @@ default:
 test:
 	make fix
 	rake test
-	rake act
+	#rake act
 
 init:
 	bundle install
@@ -23,4 +23,7 @@ commit:
 	sleep 3
 	git add .
 	git commit -am 'update'
+
+podman:
+	podman run --rm -v $$(pwd):/app:Z -w /app ruby:latest bash -c "bundle install && bundle exec rake"
 
