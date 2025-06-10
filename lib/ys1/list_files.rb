@@ -30,6 +30,7 @@ module YS1
       def filtered_files
         all_files = FileList["**/**"].select { |f| File.file?(f) }
         excluded_files = ignore_list
+        all_files.exclude("listfiles.md")
         all_files.exclude(excluded_files)
       end
 
