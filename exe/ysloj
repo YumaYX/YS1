@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "ys1"
+
+unless ARGV.size.eql?(2)
+  YS1::Cmd.usage(__FILE__, "<left.csv> <right.csv>")
+end
+
+left_csv, right_csv = ARGV
+YS1::LeftOuterJoin::CLI.new.run(left_csv, right_csv)

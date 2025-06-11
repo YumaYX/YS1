@@ -2,5 +2,5 @@
 
 module YS1
   # YS1 VERSION
-  VERSION = "0.6.0"
+  VERSION = "0.7.0"
 end

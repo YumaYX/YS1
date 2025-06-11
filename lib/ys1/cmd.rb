@@ -13,8 +13,7 @@ module YS1
       def usage(command, *args)
         message = "Usage:\n  #{File.basename(command)}"
         message += " #{args.join(" ")}" unless args.empty?
-        warn message
-        exit 1
+        abort(message)
       end
     end
   end
