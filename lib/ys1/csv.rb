@@ -50,6 +50,30 @@ module YS1
         File.write(output, JSON.dump(data))
         output
       end
+
+      ##
+      # Converts an array of hashes into a CSV-formatted string.
+      #
+      # Each hash in the array represents a row, and the union of all keys across hashes
+      # becomes the header row. Missing values are output as blank cells.
+      #
+      # @param array_of_hashes [Array<Hash>] the data to be converted into CSV
+      # @return [String] a CSV string with headers
+      #
+      # @example
+      #   hashes_to_csv([{name: "Alice", age: 30}, {name: "Bob", age: 25}])
+      #   # => "name,age\nAlice,30\nBob,25\n"
+      #
+      def hashes_to_csv(array_of_hashes)
+        headers = array_of_hashes.map(&:keys).flatten.uniq
+        CSV.generate(headers: true) do |csv|
+          csv << headers
+          array_of_hashes.each do |hash|
+            row = headers.map { |key| hash[key] }
+            csv << row
+          end
+        end
+      end
     end
   end
 end

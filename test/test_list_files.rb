@@ -22,14 +22,14 @@ class TestListFiles < Minitest::Test
 
   def test_text_format_with_text_file
     result = YS1::ListFiles.text_format("a.txt")
-    assert_includes result, "# file name : a.txt"
-    assert_includes result, "hello world"
+    assert_includes(result, "# file name : a.txt")
+    assert_includes(result, "hello world")
   end
 
   def test_text_format_with_binary_file
     result = YS1::ListFiles.text_format("bin.dat")
-    assert_includes result, "# file name : bin.dat"
-    refute_includes result, "\x00"
+    assert_includes(result, "# file name : bin.dat")
+    refute_includes(result, "\x00")
   end
 
   def test_run_creates_listfiles_md
@@ -41,8 +41,8 @@ class TestListFiles < Minitest::Test
     assert File.exist?("listfiles.md")
     output = File.read("listfiles.md")
 
-    assert_includes output, "a.txt"
-    refute_includes output, "b.rb"
-    assert_includes output, "# file name : a.txt"
+    assert_includes(output, "a.txt")
+    refute_includes(output, "b.rb")
+    assert_includes(output, "# file name : a.txt")
   end
 end
