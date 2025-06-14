@@ -110,9 +110,9 @@ module YS1
     #
     # @return [void]
     def show_digest_summary
-      puts "# Grouped by identical digest"
+      warn "# Grouped by identical digest"
       @kb_hash.each do |digest, paths|
-        puts "#{paths.size} #{digest}: #{paths.join(",")}"
+        warn "#{paths.size} #{digest}: #{paths.join(",")}"
       end
     end
 
