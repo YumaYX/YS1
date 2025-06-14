@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "ys1"
+
+YS1::Cmd.usage(__FILE__, '<"dir/**/*.rb">') if ARGV.empty?
+hasher = YS1::FileHasher.new(ARGV)
+hasher.run_by_digest

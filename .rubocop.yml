@@ -14,3 +14,4 @@ Security/MarshalLoad:
 Metrics/AbcSize:
   Exclude:
     - lib/ys1/jtable.rb
+    - 'test/test_file_hasher.rb'
