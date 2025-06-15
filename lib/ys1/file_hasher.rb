@@ -112,7 +112,7 @@ module YS1
     def show_digest_summary
       warn "# Grouped by identical digest"
       @kb_hash.each do |digest, paths|
-        puts "#{paths.size} #{digest}: #{paths.join(",")}"
+        puts "#{paths.size} #{digest[0, 7]}: #{paths.join(",")}"
       end
     end
 
@@ -122,7 +122,7 @@ module YS1
     def show_name_summary
       warn "# Grouped by identical filename"
       @fn_hash.each do |name, digests|
-        puts "#{digests.size} #{name}: #{digests.map { |h| h[0,7] }.join(",")}"
+        puts "#{digests.size} #{name}: #{digests.map { |h| h[0, 7] }.join(",")}"
       end
     end
   end
