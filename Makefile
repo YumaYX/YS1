@@ -1,5 +1,5 @@
 default:
-	cat makefile | grep ^[a-z]
+	cat Makefile | grep ^[a-z]
 
 .PHONY: test
 test:
