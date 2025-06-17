@@ -32,6 +32,7 @@ task test: :clobber
 require "rubocop/rake_task"
 RuboCop::RakeTask.new(:rubocop) do |t|
   t.patterns = %w[bin lib test Rakefile]
+  t.options = ["--format", "simple"]
 end
 
 # YARD

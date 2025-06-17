@@ -9,7 +9,7 @@ class TestYS1Report < Minitest::Test
 
   def teardown
     [@temporary_directory, "obj.dat"].each do |garbage|
-      FileUtils.rm_rf(garbage) if File.exist?(garbage)
+      FileUtils.rm_rf(garbage)
     end
   end
 
