@@ -13,9 +13,7 @@ module YS1
       # @return [nil]
       def save(object, output_name = "obj.dat")
         serialized = Marshal.dump(object)
-        File.open(output_name, "wb") do |file|
-          file.write(serialized)
-        end
+        File.binwrite(output_name, serialized)
       end
 
       # Loads a serialized object from a file.

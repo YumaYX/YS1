@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "./file_info"
+require_relative "file_info"
 require "pathname"
 require "digest"
 
@@ -122,7 +122,7 @@ module YS1
     def show_name_summary
       warn "# Grouped by identical filename"
       @fn_hash.each do |name, digests|
-        puts "#{digests.size} #{name}: #{digests.map { |h| h[0, 7] }.join(",")}"
+        puts "#{digests.size[0, 7]} #{name}: #{digests.map { |h| h[0, 7] }.join(",")}"
       end
     end
   end

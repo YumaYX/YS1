@@ -8,7 +8,7 @@ class TestYS1Text < Minitest::Test
   end
 
   def teardown
-    FileUtils.rm_rf(@temporary_directory) if File.exist?(@temporary_directory)
+    FileUtils.rm_rf(@temporary_directory)
   end
 
   def test_extract_with_mark

@@ -12,7 +12,7 @@ class TestListFiles < Minitest::Test
 
     File.write("a.txt", "hello world")
     File.write("b.rb", "puts 'ruby'")
-    File.open("bin.dat", "wb") { |f| f.write("\x00\x01\x02\x03") }
+    File.binwrite("bin.dat", "\x00\x01\x02\x03")
   end
 
   def teardown

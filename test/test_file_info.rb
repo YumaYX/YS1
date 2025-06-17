@@ -16,7 +16,7 @@ class TestYS1FileInfo < Minitest::Test
 
   def teardown
     # Ensure the temporary directory and its contents are removed
-    FileUtils.remove_entry @temp_dir if File.exist?(@temp_dir)
+    FileUtils.rm_rf @temp_dir
   end
 
   def test_initialize_with_valid_path
