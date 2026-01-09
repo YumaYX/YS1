@@ -13,7 +13,7 @@ init:
 fix:
 	-rake rubocop:autocorrect_all
 
-update:
+update: init
 	chmod 755 exe/*
 	make test
 	make commit

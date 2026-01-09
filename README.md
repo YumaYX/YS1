@@ -15,18 +15,13 @@ YS1 is an indispensable toolkit and concept designed to be both convenient and u
 ### gem Installation
 
 ```sh
-git clone https://github.com/YumaYX/YS1.git && cd YS1
-
-gem build ys1.gemspec
-gem install ys1*.gem --local
+git clone https://github.com/YumaYX/YS1.git && cd YS1 && gem build ys1.gemspec && gem install ys1*.gem --local
 ```
 
 or
 
 ```sh
-git clone https://github.com/YumaYX/YS1.git && cd YS1
-bundle install
-bundle exec rake install:local
+git clone https://github.com/YumaYX/YS1.git && cd YS1 && bundle install && bundle exec rake install:local
 ```
 
 ### bundle Installation
