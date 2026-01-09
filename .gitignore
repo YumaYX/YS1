@@ -13,3 +13,4 @@ Gemfile.lock
 *.gem
 *.dat
 listfiles.md
+.cache/

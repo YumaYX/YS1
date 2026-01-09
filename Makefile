@@ -25,5 +25,4 @@ commit:
 	git commit -am 'update'
 
 podman:
-	podman run --rm -v $$(pwd):/app:Z -w /app ruby:latest bash -c "bundle install && bundle exec rake"
-
+	podman run --userns=keep-id --rm -v $(CURDIR):/app:Z -w /app docker.io/library/ruby:latest bash -c 'bundle install && bundle exec rake'
