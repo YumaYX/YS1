@@ -16,6 +16,7 @@ YS1 is an indispensable toolkit and concept designed to be both convenient and u
 
 ```sh
 git clone https://github.com/YumaYX/YS1.git && cd YS1
+
 gem build ys1.gemspec
 gem install ys1*.gem --local
 
