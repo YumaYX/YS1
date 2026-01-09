@@ -12,18 +12,18 @@ YS1 is an indispensable toolkit and concept designed to be both convenient and u
 
 ## Installation
 
+### gem Installation
+
 ```sh
 gem build ys1.gemspec
 gem install ys1*.gem --local
-```
 
-or
+# or
 
-```sh
 rake install:local
 ```
 
-or
+### bundle Installation
 
 ```sh
 cat <<'GEMFILEEOF' >> Gemfile
@@ -45,6 +45,9 @@ require "ys1"
 array = YS1::Csv.to_array("sample.csv")
 puts array
 ```
+
+- `gem install`: `ruby -rys1 -e 'p YS1::VERSION'`
+- `bundle install`: `bundle exec ruby -rys1 -e 'p YS1::VERSION'`
 
 ## Contributing
 
