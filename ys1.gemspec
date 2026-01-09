@@ -35,12 +35,16 @@ Gem::Specification.new do |spec|
 
   # Uncomment to register a new dependency of your gem
   # spec.add_dependency "example-gem", "~> 1.0"
-  spec.add_dependency "csv"
-  spec.add_dependency "minitest"
-  spec.add_dependency "rake"
-  spec.add_dependency "rdoc"
-  spec.add_dependency "rubocop"
-  spec.add_dependency "yard"
+  {
+    csv:      nil,
+    minitest: nil,
+    rake:     nil,
+    rdoc:     nil,
+    rubocop: nil,
+    yard:    nil,
+  }.each do |dep, version|
+    spec.add_dependency(dep.to_s, version).compact
+  end
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
