@@ -19,10 +19,14 @@ git clone https://github.com/YumaYX/YS1.git && cd YS1
 
 gem build ys1.gemspec
 gem install ys1*.gem --local
+```
 
-# or
+or
 
-rake install:local
+```sh
+git clone https://github.com/YumaYX/YS1.git && cd YS1
+bundle install
+bundle exec rake install:local
 ```
 
 ### bundle Installation
