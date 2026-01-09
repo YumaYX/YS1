@@ -38,9 +38,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency "csv"
   spec.add_dependency "minitest"
   spec.add_dependency "rake"
-  spec.add_development_dependency "rdoc"
-  spec.add_development_dependency "rubocop"
-  #spec.add_development_dependency "yard"
+  spec.add_dependency "rdoc"
+  spec.add_dependency "rubocop"
+  spec.add_dependency "yard"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
