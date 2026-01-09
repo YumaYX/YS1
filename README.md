@@ -27,8 +27,11 @@ or
 
 ```sh
 cat <<'GEMFILEEOF' >> Gemfile
+# frozen_string_literal: true
+source "https://rubygems.org"
 gem 'ys1', git: 'https://github.com/YumaYX/YS1.git'
 GEMFILEEOF
+
 bundle install
 ```
 
@@ -50,3 +53,4 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/YumaYX
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
