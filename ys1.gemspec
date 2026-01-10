@@ -43,7 +43,7 @@ Gem::Specification.new do |spec|
     rubocop: nil,
     yard:    nil,
   }.each do |dep, version|
-    spec.add_dependency(dep.to_s, version).compact
+    spec.add_dependency(dep.to_s, version)
   end
 
   # For more information and examples about making a new gem, check out our
