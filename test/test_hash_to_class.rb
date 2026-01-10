@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
-require_relative "helper"
+require_relative("helper")
 
 class TestYS1HashToDynamicClass < Minitest::Test
+  # Set up a sample hash representing Ruby info
   def setup
     @ruby_info = { "version" => "4.0.0", "release_date" => "2025-12-25" }
   end
 
+  # Test converting a hash to a dynamic class and checking attribute values
   def test_to_dynamic_class
     instance = @ruby_info.to_dynamic_class.new
 
@@ -15,6 +17,7 @@ class TestYS1HashToDynamicClass < Minitest::Test
     end
   end
 
+  # Test defining an additional method on the dynamic class
   def test_extra
     klass = @ruby_info.to_dynamic_class
 
