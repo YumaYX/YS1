@@ -5,11 +5,11 @@ require_relative "lib/ys1/version"
 Gem::Specification.new do |spec|
   spec.name = "ys1"
   spec.version = YS1::VERSION
-  spec.authors = ["YumaYX"]
+  spec.authors = ["Yuma"]
   spec.email = ["86939129+YumaYX@users.noreply.github.com"]
 
   spec.summary = "My Essential"
-  # spec.description = "TODO: Write a longer description or delete this line."
+  spec.description = "YS1 is an indispensable toolkit and concept designed to be both convenient and useful, which I won’t want to forget. This toolkit is particularly valuable for basic information processing. It improves efficiency and accuracy in handling and managing information across a range of tasks."
   spec.homepage = "https://github.com/YumaYX/YS1"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.5.5"
