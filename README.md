@@ -46,9 +46,6 @@ in your codes:
 
 ```ruby
 require "ys1"
-
-array = YS1::Csv.to_array("sample.csv")
-puts array
 ```
 
 - `gem install`: `ruby -rys1 -e 'p YS1::VERSION'`

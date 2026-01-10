@@ -2,24 +2,6 @@
 
 require "bundler/gem_tasks"
 
-# ACT
-desc "Test with act"
-task :act do
-  if RUBY_PLATFORM.include?("arm64")
-    sh %(act -j test -W .github/workflows/test.yml --container-architecture linux/arm64)
-  else
-    sh %(sudo /root/bin/act -j test -W .github/workflows/test.yml)
-  end
-end
-
-# Git
-desc "Git Tag and Push"
-task tag: :act do
-  vtag = "v#{YS1::VERSION}"
-  sh %(git tag #{vtag})
-  sh %(git push origin #{vtag})
-end
-
 # TEST
 require "rake/testtask"
 Rake::TestTask.new do |t|

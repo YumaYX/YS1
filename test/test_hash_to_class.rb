@@ -2,21 +2,26 @@
 
 require_relative "helper"
 
-class TestYS1HashToClass < Minitest::Test
+class TestYS1HashToDynamicClass < Minitest::Test
   def setup
-    @ruby_info = { "version" => "3.3.3", "release_date" => "2024-06-12" }
+    @ruby_info = { "version" => "4.0.0", "release_date" => "2025-12-25" }
   end
 
-  def test_create_dynamic_class
-    instance = YS1::HashToClass.create_dynamic_class(@ruby_info).new
-    @ruby_info.each { |key, value| assert_equal(value, instance.send(key.to_sym)) }
+  def test_to_dynamic_class
+    instance = @ruby_info.to_dynamic_class.new
+
+    @ruby_info.each do |key, value|
+      assert_equal(value, instance.send(key))
+    end
   end
 
   def test_extra
-    instance = YS1::HashToClass.create_dynamic_class(@ruby_info)
-    instance.define_method(:new_method) do
+    klass = @ruby_info.to_dynamic_class
+
+    klass.define_method(:new_method) do
       "ver. #{version}"
     end
-    assert_equal("ver. 3.3.3", instance.new.new_method)
+
+    assert_equal("ver. 4.0.0", klass.new.new_method)
   end
 end

@@ -1,18 +1,9 @@
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 3.0
+  TargetRubyVersion: 4.0
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
 Style/StringLiteralsInInterpolation:
   EnforcedStyle: double_quotes
-
-Security/MarshalLoad:
-  Exclude:
-    - lib/ys1/report.rb
-
-Metrics/AbcSize:
-  Exclude:
-    - lib/ys1/jtable.rb
-    - 'test/test_file_hasher.rb'
