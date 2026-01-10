@@ -24,6 +24,8 @@ or
 git clone https://github.com/YumaYX/YS1.git && cd YS1 && bundle install && bundle exec rake install:local
 ```
 
+gem: Installs and manages gems globally or per Ruby version, handling only runtime dependencies from the gemspec and ignoring development dependencies.
+
 ### bundle Installation
 
 ```sh
@@ -35,6 +37,8 @@ GEMFILEEOF
 
 bundle install
 ```
+
+bundle: Installs and manages gems per project based on the Gemfile and Gemfile.lock, resolving both runtime and development dependencies and isolating them within the project.
 
 ## Usage
 
