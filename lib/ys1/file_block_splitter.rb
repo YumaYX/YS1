@@ -7,6 +7,21 @@ require "tmpdir"
 module YS1
   # Splits a file into blocks based on a user-defined boundary condition.
   # Each block is saved to a temporary directory and can be processed sequentially.
+  # Example usage of YS1::FileBlockSplitter
+  #
+  # @example Splitting a file into blocks and processing each
+  #   processor = YS1::FileBlockSplitter.new('file.txt') do |line|
+  #     line.start_with?('HEADER')
+  #   end
+  #
+  #   # Split the file into blocks based on the block start condition
+  #   processor.split_into_blocks
+  #
+  #   # Process each block file
+  #   processor.process_blocks do |path|
+  #     puts "Block file: #{path}"
+  #     File.foreach(path) { |line| puts line.chomp }
+  #   end
   class FileBlockSplitter
     attr_reader :file_name, :tmp_dir, :saved_files
 
