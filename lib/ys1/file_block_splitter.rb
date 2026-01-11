@@ -11,7 +11,7 @@ module YS1
   #
   # @example Splitting a file into blocks and processing each
   #   processor = YS1::FileBlockSplitter.new('file.txt') do |line|
-  #     line.start_with?('HEADER')
+  #     line.match?(/HEADER/)
   #   end
   #
   #   # Split the file into blocks based on the block start condition
