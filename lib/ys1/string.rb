@@ -30,18 +30,14 @@ class String
   # @note For very large data, consider splitting the file using the `csplit` command
   #   before processing to avoid loading the entire file into memory at once.
   def to_pacs(start_line)
-    pacs = []
-    each_line do |raw_line|
+    each_line.with_object([]) do |raw_line, pacs|
       line = raw_line.chomp
 
       if line.match?(start_line)
         pacs << YS1::ParentAndChild.new(line)
-        next
+      else
+        pacs.last&.add_child(line)
       end
-
-      pacs.last&.add_child(line)
     end
-
-    pacs
   end
 end
