@@ -14,3 +14,5 @@
 *.swp
 Gemfile.lock
 _site/
+.cache/
+

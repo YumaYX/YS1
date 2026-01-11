@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# LIB FILE
+mod_file = <<~LIBEOL
+  # frozen_string_literal: true
+
+  module YS1
+    # t
+    module T
+      class << self; end
+    end
+  end
+LIBEOL
+
+mod_file_path = "#{__dir__}/../lib/ys1/t.rb"
+File.write(mod_file_path, mod_file) unless File.exist?(mod_file_path)
+
+# TEST FILE
+test_file = <<~TESTEOL
+  # frozen_string_literal: true
+
+  require_relative "helper"
+
+  class TestYS1T < Minitest::Test
+    def setup; end
+    def teardown; end
+    def test_t
+      assert(false)
+    end
+  end
+TESTEOL
+
+test_file_path = "#{__dir__}/../test/test_t.rb"
+File.write(test_file_path, test_file) unless File.exist?(test_file_path)

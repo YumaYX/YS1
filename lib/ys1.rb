@@ -3,4 +3,6 @@
 # YS1
 module YS1; end
 
-Dir.glob("#{__dir__}/ys1/*.rb").each { |lib| require(lib) }
+Dir.glob(File.join(__dir__, "ys1", "**", "*.rb")).each do |file|
+  require(file)
+end

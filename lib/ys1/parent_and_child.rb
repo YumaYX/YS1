@@ -9,6 +9,7 @@ module YS1
     # @return [Array<Object>] The array of child objects.
     attr_accessor :children
 
+    #
     # Initializes a new instance of ParentAndChild.
     #
     # @param parent [Object] The parent object.
@@ -17,6 +18,7 @@ module YS1
       @children = []
     end
 
+    #
     # Adds child objects to the array of children.
     #
     # @param child The child objects to be added.
@@ -30,6 +32,7 @@ module YS1
       end
     end
 
+    #
     # Retrieves an array representing the family, including the parent and children.
     #
     # @return [Array<Object>] The array representing the family.

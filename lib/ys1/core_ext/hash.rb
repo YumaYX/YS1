@@ -1,26 +1,25 @@
 # frozen_string_literal: true
 
-#
-# Extends Hash to convert itself into a dynamic class.
-#
+# OpenClass Hash
 class Hash
   #
-  # Creates a dynamic class based on the hash.
+  # Builds an anonymous class from the hash.
   #
-  # Each key becomes an attribute with getter and setter methods,
-  # and each value is assigned during initialization.
+  # Each hash key becomes an attribute with both reader and writer methods.
+  # The corresponding values are assigned when an instance is initialized.
   #
   # @return [Class]
-  #   A dynamically created class with attributes derived from the hash.
+  #   An anonymous class with accessor methods for each hash key,
+  #   pre-populated with the hash’s values.
   #
   # @example
   #   hash = { name: "Alice", age: 30 }
-  #   klass = hash.to_dynamic_class
+  #   klass = hash.to_anon_class
   #   obj = klass.new
   #   obj.name #=> "Alice"
   #   obj.age  #=> 30
   #
-  def to_dynamic_class
+  def to_anon_class
     source = self
 
     Class.new do

@@ -1,6 +1,7 @@
 name: Test
 on:
   push:
+    branches: ["workshop"]
   workflow_dispatch:
   schedule:
     - cron: '0 0 1 * *'
@@ -8,6 +9,7 @@ jobs:
   test:
     runs-on: ${{ matrix. os }}
     strategy:
+      max-parallel: 1
       fail-fast: true
       matrix:
         os: [ubuntu-latest]
@@ -15,7 +17,7 @@ jobs:
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}

@@ -12,13 +12,14 @@ Gem::Specification.new do |spec|
   spec.description = "YS1 is an indispensable toolkit and concept designed to be both convenient and useful, which I won’t want to forget. This toolkit is particularly valuable for basic information processing. It improves efficiency and accuracy in handling and managing information across a range of tasks."
   spec.homepage = "https://github.com/YumaYX/YS1"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 2.5.5"
+  spec.required_ruby_version = ">= 3.0"
 
   spec.metadata["allowed_push_host"] = "https://rubygems.pkg.github.com/YumaYX"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = spec.homepage
   spec.metadata["changelog_uri"] = spec.homepage
+  spec.metadata["rubygems_mfa_required"] = "true"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -36,14 +37,19 @@ Gem::Specification.new do |spec|
   # Uncomment to register a new dependency of your gem
   # spec.add_dependency "example-gem", "~> 1.0"
   {
-    csv:      nil,
+    csv: nil,
+    rdoc: nil,
     minitest: nil,
-    rake:     nil,
-    rdoc:     nil,
-    rubocop: nil,
-    yard:    nil,
+    rake: nil
   }.each do |dep, version|
     spec.add_dependency(dep.to_s, version)
+  end
+
+  {
+    rubocop: nil,
+    yard: nil
+  }.each do |dep, version|
+    spec.add_development_dependency(dep.to_s, version)
   end
 
   # For more information and examples about making a new gem, check out our

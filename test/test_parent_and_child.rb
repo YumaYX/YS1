@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative("helper")
+require_relative "helper"
 
 class TestYS1ParentAndChild < Minitest::Test
   # Set up a ParentAndChild instance with "Parent" as the root
