@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# YS1 module contains functionality for serializing and deserializing objects.
 module YS1
   # Report module provides methods to save and load objects using serialization.
   module Report
