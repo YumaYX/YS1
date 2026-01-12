@@ -40,8 +40,8 @@ Gem::Specification.new do |spec|
     minitest: nil,
     rake:     nil,
     rdoc:     nil,
-    rubocop: nil,
-    yard:    nil,
+    rubocop:  nil,
+    yard:     nil,
   }.each do |dep, version|
     spec.add_dependency(dep.to_s, version)
   end
