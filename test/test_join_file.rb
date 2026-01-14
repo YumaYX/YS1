@@ -38,10 +38,7 @@ class TestYS1Join < Minitest::Test
       end
     end
 
-    assert_equal(
-      [%w[x 1], %w[x 2], %w[y 1], %w[y 2]],
-      result
-    )
+    assert_equal([%w[x 1], %w[x 2], %w[y 1], %w[y 2]], result)
   end
 
   def test_cross_from_files_single_file
