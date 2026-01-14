@@ -3,7 +3,7 @@
 require_relative "helper"
 require "tempfile"
 
-class TestYS1Join < Minitest::Test
+class TestYS1JoinFile < Minitest::Test
   def with_tempfile(lines)
     file = Tempfile.new("ys1_join")
     file.write(lines.join("\n"))
