@@ -14,8 +14,8 @@ class TestYS1JoinFile < Minitest::Test
   end
 
   def test_cross_files_with_block
-    with_tempfile(["A", "B"]) do |f1|
-      with_tempfile(["1", "2"]) do |f2|
+    with_tempfile(%w[A B]) do |f1|
+      with_tempfile(%w[1 2]) do |f2|
         result = []
 
         YS1::Join.cross_files(f1, f2) do |a, b|
@@ -23,7 +23,7 @@ class TestYS1JoinFile < Minitest::Test
         end
 
         assert_equal(
-          ["A1", "A2", "B1", "B2"],
+          %w[A1 A2 B1 B2],
           result
         )
       end
@@ -32,12 +32,12 @@ class TestYS1JoinFile < Minitest::Test
 
   def test_cross_files_returns_enumerator
     with_tempfile(["X"]) do |f1|
-      with_tempfile(["Y", "Z"]) do |f2|
+      with_tempfile(%w[Y Z]) do |f2|
         enum = YS1::Join.cross_files(f1, f2)
 
         assert_instance_of(Enumerator, enum)
         assert_equal(
-          ["XY", "XZ"],
+          %w[XY XZ],
           enum.map { |a, b| "#{a}#{b}" }
         )
       end

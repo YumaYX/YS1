@@ -40,7 +40,6 @@ module YS1
       recurse.call([], arrays)
     end
 
-
     # Perform a cross join using text files as inputs.
     #
     # Each file is read line by line, and each line (chomped)
@@ -57,12 +56,12 @@ module YS1
     #     puts "#{a}-#{b}"
     #   end
     #
-    def self.cross_files(*paths, &block)
+    def self.cross_files(*paths, &)
       enumerables = paths.map do |path|
         File.foreach(path, chomp: true)
       end
 
-      cross(*enumerables, &block)
+      cross(*enumerables, &)
     end
   end
 end

@@ -6,19 +6,19 @@ class TestYS1Join < Minitest::Test
   def test_cross_with_block
     result = []
 
-    YS1::Join.cross(["A", "B"], ["1", "2"]) do |a, b|
+    YS1::Join.cross(%w[A B], %w[1 2]) do |a, b|
       result << "#{a}#{b}"
     end
 
-    assert_equal(["A1", "A2", "B1", "B2"], result)
+    assert_equal(%w[A1 A2 B1 B2], result)
   end
 
   def test_cross_returns_enumerator_when_no_block
-    enum = YS1::Join.cross(["A", "B"], ["1", "2"])
+    enum = YS1::Join.cross(%w[A B], %w[1 2])
 
     assert_instance_of(Enumerator, enum)
     assert_equal(
-      ["A1", "A2", "B1", "B2"],
+      %w[A1 A2 B1 B2],
       enum.map { |a, b| "#{a}#{b}" }
     )
   end
@@ -26,7 +26,7 @@ class TestYS1Join < Minitest::Test
   def test_cross_with_three_arrays
     result = []
 
-    YS1::Join.cross(["A"], ["1", "2"], ["x", "y"]) do |a, b, c|
+    YS1::Join.cross(["A"], %w[1 2], %w[x y]) do |a, b, c|
       result << "#{a}-#{b}-#{c}"
     end
 
@@ -39,7 +39,7 @@ class TestYS1Join < Minitest::Test
   def test_cross_with_single_array
     result = []
 
-    YS1::Join.cross(["A", "B"]) do |a|
+    YS1::Join.cross(%w[A B]) do |a|
       result << a
     end
 
@@ -49,7 +49,7 @@ class TestYS1Join < Minitest::Test
   def test_cross_with_empty_array
     result = []
 
-    YS1::Join.cross(["A", "B"], []) do |values|
+    YS1::Join.cross(%w[A B], []) do |values|
       result << values
     end
 
