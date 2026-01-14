@@ -21,7 +21,7 @@ module YS1
     # @example No arguments
     #   YS1::Join.cross.to_a
     #   # => [[]]
-    def self.cross(*arrays, &)
+    def self.cross(*arrays, &block)
       return enum_for(__method__, *arrays) unless block_given?
 
       if arrays.empty?
