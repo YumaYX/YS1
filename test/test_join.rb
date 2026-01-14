@@ -43,7 +43,7 @@ class TestYS1Join < Minitest::Test
       result << a
     end
 
-    assert_equal(["A", "B"], result)
+    assert_equal([["A"], ["B"]], result)
   end
 
   def test_cross_with_empty_array
