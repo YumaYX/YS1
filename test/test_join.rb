@@ -3,55 +3,46 @@
 require_relative "helper"
 
 class TestYS1Join < Minitest::Test
-  def test_cross_with_block
+  def test_basic_product
     result = []
-
-    YS1::Join.cross(%w[A B], %w[1 2]) do |a, b|
-      result << "#{a}#{b}"
-    end
-
-    assert_equal(%w[A1 A2 B1 B2], result)
-  end
-
-  def test_cross_returns_enumerator_when_no_block
-    enum = YS1::Join.cross(%w[A B], %w[1 2])
-
-    assert_instance_of(Enumerator, enum)
-    assert_equal(
-      %w[A1 A2 B1 B2],
-      enum.map { |a, b| "#{a}#{b}" }
-    )
-  end
-
-  def test_cross_with_three_arrays
-    result = []
-
-    YS1::Join.cross(["A"], %w[1 2], %w[x y]) do |a, b, c|
-      result << "#{a}-#{b}-#{c}"
-    end
+    YS1::Join.cross([1, 2], %i[a b]) { |x| result << x }
 
     assert_equal(
-      ["A-1-x", "A-1-y", "A-2-x", "A-2-y"],
+      [[1, :a], [1, :b], [2, :a], [2, :b]],
       result
     )
   end
 
-  def test_cross_with_single_array
+  def test_multiple_arrays
     result = []
+    YS1::Join.cross([1, 2], [:a], [true, false]) { |x| result << x }
 
-    YS1::Join.cross(%w[A B]) do |a|
-      result << a
-    end
-
-    assert_equal([["A"], ["B"]], result)
+    assert_equal(
+      [[1, :a, true], [1, :a, false], [2, :a, true], [2, :a, false]],
+      result
+    )
   end
 
-  def test_cross_with_empty_array
-    result = []
+  def test_returns_enumerator_without_block
+    enum = YS1::Join.cross([1, 2], %i[a b])
 
-    YS1::Join.cross(%w[A B], []) do |values|
-      result << values
-    end
+    assert_instance_of Enumerator, enum
+    assert_equal(
+      [[1, :a], [1, :b], [2, :a], [2, :b]],
+      enum.to_a
+    )
+  end
+
+  def test_no_arguments
+    result = []
+    YS1::Join.cross { |x| result << x }
+
+    assert_equal([[]], result)
+  end
+
+  def test_empty_array
+    result = []
+    YS1::Join.cross([1, 2], []) { |x| result << x }
 
     assert_equal([], result)
   end

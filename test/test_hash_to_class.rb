@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative("helper")
+require_relative "helper"
 
 class TestYS1HashToDynamicClass < Minitest::Test
   # Set up a sample hash representing Ruby info
