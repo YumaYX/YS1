@@ -33,13 +33,13 @@ module YS1
         .reduce([[]]) do |acc, arr|
           acc.product(arr).map { |prefix, item| prefix + [item] }
         end
-        .each(&)
+        .each(&block)
     end
 
     # Read files and generate the Cartesian product of their lines.
     #
     # Each file is read as an array of lines (newline removed),
-    # then passed to {.cross}.
+    # then passed to {#cross}.
     #
     # @param filenames [Array<String>] file paths
     # @yieldparam combo [Array<String>] one combination of lines
@@ -56,12 +56,12 @@ module YS1
     #
     #   YS1::Join.cross_from_files("a.txt", "b.txt").to_a
     #   # => [["1", "a"], ["1", "b"], ["2", "a"], ["2", "b"]]
-    def self.cross_from_files(*filenames, &)
+    def self.cross_from_files(*filenames, &block)
       arrays = filenames.map do |filename|
         File.readlines(filename, chomp: true)
       end
 
-      cross(*arrays, &)
+      cross(*arrays, &block)
     end
   end
 end
