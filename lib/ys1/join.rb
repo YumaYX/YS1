@@ -39,7 +39,7 @@ module YS1
     # Read files and generate the Cartesian product of their lines.
     #
     # Each file is read as an array of lines (newline removed),
-    # then passed to {#cross}.
+    # then passed to {.cross}.
     #
     # @param filenames [Array<String>] file paths
     # @yieldparam combo [Array<String>] one combination of lines
