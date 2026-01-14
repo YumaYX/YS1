@@ -39,5 +39,30 @@ module YS1
 
       recurse.call([], arrays)
     end
+
+
+    # Perform a cross join using text files as inputs.
+    #
+    # Each file is read line by line, and each line (chomped)
+    # is treated as an element of the cross join.
+    #
+    # This method does not load entire files into memory.
+    #
+    # @param paths [Array<String>] file paths to read
+    # @yieldparam values [Array<String>] one combination of lines
+    # @return [Enumerator, nil] Enumerator if no block is given, otherwise nil
+    #
+    # @example
+    #   YS1::Join.cross_files("a.txt", "b.txt") do |a, b|
+    #     puts "#{a}-#{b}"
+    #   end
+    #
+    def self.cross_files(*paths, &block)
+      enumerables = paths.map do |path|
+        File.foreach(path, chomp: true)
+      end
+
+      cross(*enumerables, &block)
+    end
   end
 end
