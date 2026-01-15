@@ -23,7 +23,7 @@ module YS1
       # @example No arguments
       #   YS1::Join.cross.to_a
       #   # => [[]]
-      def cross(*arrays, &)
+      def cross(*arrays, &block)
         return enum_for(__method__, *arrays) unless block_given?
 
         if arrays.empty?
@@ -35,7 +35,7 @@ module YS1
           .reduce([[]]) do |acc, arr|
             acc.product(arr).map { |prefix, item| prefix + [item] }
           end
-          .each(&)
+          .each(&block)
       end
 
       #
@@ -59,12 +59,12 @@ module YS1
       #
       #   YS1::Join.cross_from_files("a.txt", "b.txt").to_a
       #   # => [["1", "a"], ["1", "b"], ["2", "a"], ["2", "b"]]
-      def cross_from_files(*filenames, &)
+      def cross_from_files(*filenames, &block)
         arrays = filenames.map do |filename|
           File.readlines(filename, chomp: true)
         end
 
-        cross(*arrays, &)
+        cross(*arrays, &block)
       end
     end
   end

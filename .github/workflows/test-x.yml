@@ -1,17 +1,17 @@
 name: Test x
 on: [push]
 jobs:
-  test:
+  testwin:
     runs-on: ${{ matrix. os }}
     strategy:
       fail-fast: true
       matrix:
         os: [windows-latest]
-        ruby: [head]
+        ruby: [4.0]
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
