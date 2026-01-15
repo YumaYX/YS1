@@ -52,4 +52,3 @@ class Integer
     YS1::IP.netmask(self)
   end
 end
-
