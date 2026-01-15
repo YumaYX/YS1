@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-#
-# Extends Hash with the ability to generate an anonymous class
-# whose attributes are derived from the hash’s keys and values.
-#
+# OpenClass Hash
 class Hash
   #
   # Builds an anonymous class from the hash.
