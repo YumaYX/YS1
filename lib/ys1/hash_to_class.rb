@@ -15,12 +15,12 @@ class Hash
   #
   # @example
   #   hash = { name: "Alice", age: 30 }
-  #   klass = hash.to_dynamic_class
+  #   klass = hash.to_anon_class
   #   obj = klass.new
   #   obj.name #=> "Alice"
   #   obj.age  #=> 30
   #
-  def to_dynamic_class
+  def to_anon_class
     source = self
 
     Class.new do
