@@ -4,6 +4,7 @@ module YS1
   # Report module provides methods to save and load objects using serialization.
   module Report
     class << self
+      #
       # Serializes the given object and saves it to a file.
       #
       # @param object [Object] The object to be serialized and saved.
@@ -15,6 +16,7 @@ module YS1
         File.binwrite(output_name, serialized)
       end
 
+      #
       # Loads a serialized object from a file.
       #
       # @param input_name [String] The name of the file from which the object will be loaded. Default is "obj.dat".

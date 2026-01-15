@@ -32,3 +32,17 @@ class TestYS1ParentAndChild < Minitest::Test
     assert_equal(["Parent", 0, 1, 2], @pac.family)
   end
 end
+
+class TestYS1String < Minitest::Test
+  def test_to_pacs
+    pacs = "dummy\nParent0\nchild0\nchild1\nParent1\nchild2\nchild3".to_pacs(/Parent/)
+
+    assert_equal(
+      [
+        %w[Parent0 child0 child1],
+        %w[Parent1 child2 child3]
+      ],
+      pacs.map(&:family)
+    )
+  end
+end
