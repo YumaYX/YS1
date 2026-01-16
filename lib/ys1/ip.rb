@@ -28,7 +28,7 @@ module YS1
       #   YS1::IP.netmask(0)
       #   # => "0.0.0.0"
       #
-      # @see IPAddr#mask
+      # @see https://docs.ruby-lang.org/ja/latest/library/ipaddr.html
       def netmask(prefix)
         unless prefix.is_a?(Integer) && (0..32).include?(prefix)
           raise ArgumentError, "prefix must be an Integer between 0 and 32"
