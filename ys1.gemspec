@@ -37,13 +37,18 @@ Gem::Specification.new do |spec|
   # spec.add_dependency "example-gem", "~> 1.0"
   {
     csv:      nil,
+    rdoc:     nil,
     minitest: nil,
     rake:     nil,
-    rdoc:     nil,
-    rubocop:  nil,
-    yard:     nil,
   }.each do |dep, version|
     spec.add_dependency(dep.to_s, version)
+  end
+
+  {
+    rubocop:  nil,
+    yard:     nil
+  }.each do |dep, version|
+    spec.add_development_dependency(dep.to_s, version)
   end
 
   # For more information and examples about making a new gem, check out our

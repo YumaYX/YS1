@@ -12,7 +12,7 @@ YS1 is an indispensable toolkit and concept designed to be both convenient and u
 
 ## Installation
 
-### gem Installation
+### A gem Installation
 
 ```sh
 git clone https://github.com/YumaYX/YS1.git && cd YS1 && gem build ys1.gemspec && gem install ys1*.gem --local
@@ -26,7 +26,7 @@ git clone https://github.com/YumaYX/YS1.git && cd YS1 && bundle install && bundl
 
 gem: Installs and manages gems globally or per Ruby version, handling only runtime dependencies from the gemspec and ignoring development dependencies.
 
-### bundle Installation
+### B bundle Installation
 
 ```sh
 cat <<'GEMFILEEOF' >> Gemfile
@@ -39,6 +39,22 @@ bundle install
 ```
 
 bundle: Installs and manages gems per project based on the Gemfile and Gemfile.lock, resolving both runtime and development dependencies and isolating them within the project.
+
+### C Offline Installation on RHEL Clones
+
+Set up the environment using the following command.
+
+```sh
+# example @ AlmaLinux release 10.1 (Heliotrope Lion)
+sudo dnf -y install "@Development Tools" ruby* # git make
+```
+
+Download the ZIP from GitHub, then run the rake and gem commands in that directory.
+
+```sh
+rake && gem build ys1.gemspec && gem install ys1*.gem --local
+```
+
 
 ## Usage
 

@@ -2,7 +2,7 @@
 
 require_relative "helper"
 
-class TestYS1HashToClass < Minitest::Test
+class TestYS1Hash < Minitest::Test
   # Set up a sample hash representing Ruby info
   def setup
     @ruby_info = { "version" => "4.0.0", "release_date" => "2025-12-25" }

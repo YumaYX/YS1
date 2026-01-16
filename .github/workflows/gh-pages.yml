@@ -36,9 +36,12 @@ jobs:
         uses: actions/configure-pages@v4
       - name: Build with yard
         # Outputs to the './_site' directory by default
-        run: bundle exec rake yard
+        run: |
+          bundle exec rake yard
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
 
   # Deployment job
   deploy:

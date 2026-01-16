@@ -5,6 +5,26 @@ require "ipaddr"
 module YS1
   # IP
   module IP
+    # Represents a CIDR block
+    #
+    # @attr [String] addr The network address (e.g., "10.0.0.0")
+    # @attr [Integer] prefix The CIDR prefix length (e.g., 24)
+    #
+    # @example Creating and using a CIDR object
+    #   cidr = YS1::IP::Cidr.new("10.0.0.0", 24)
+    #
+    #   cidr.addr
+    #   # => "10.0.0.0"
+    #
+    #   cidr.prefix
+    #   # => 24
+    #
+    #   # Example: build CIDR notation string
+    #   "#{cidr.addr}/#{cidr.prefix}"
+    #   # => "10.0.0.0/24"
+    #
+    Cidr = Struct.new(:addr, :prefix)
+
     class << self
       #
       # Convert a CIDR prefix length to an IPv4 netmask string.
@@ -28,7 +48,7 @@ module YS1
       #   YS1::IP.netmask(0)
       #   # => "0.0.0.0"
       #
-      # @see IPAddr#mask
+      # @see https://docs.ruby-lang.org/ja/latest/library/ipaddr.html
       def netmask(prefix)
         unless prefix.is_a?(Integer) && (0..32).include?(prefix)
           raise ArgumentError, "prefix must be an Integer between 0 and 32"
@@ -37,22 +57,5 @@ module YS1
         IPAddr.new("255.255.255.255").mask(prefix).to_s
       end
     end
-  end
-end
-
-# OpenClass Integer
-class Integer
-  #
-  # Convert an integer (0–32) representing a CIDR prefix length
-  # into its corresponding IPv4 netmask string.
-  #
-  # @return [String] IPv4 netmask (e.g. "255.255.255.0")
-  # @raise [ArgumentError] if the integer is not between 0 and 32
-  # @example
-  #   24.ipv4mask  # => "255.255.255.0"
-  #   32.ipv4mask  # => "255.255.255.255"
-  #   0.ipv4mask   # => "0.0.0.0"
-  def ipv4mask
-    YS1::IP.netmask(self)
   end
 end
