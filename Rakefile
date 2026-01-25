@@ -2,6 +2,16 @@
 
 require "bundler/gem_tasks"
 
+task :bundle_rake do
+  sh <<~CMD
+    podman run --userns=keep-id --rm \
+      -v #{Dir.pwd}:/app:Z \
+      -w /app \
+      docker.io/library/ruby:latest \
+      bash -c 'bundle install && bundle exec rake'
+  CMD
+end
+
 # TEST
 require "rake/testtask"
 Rake::TestTask.new do |t|
@@ -9,13 +19,17 @@ Rake::TestTask.new do |t|
   t.verbose = true
   t.warning = true
 end
-task test: :clobber
+task test: [:clobber, "rubocop:autocorrect"]
 
 # RUBOCOP
 require "rubocop/rake_task"
 RuboCop::RakeTask.new(:rubocop) do |t|
   t.patterns = %w[bin lib test Rakefile]
   t.options = ["--format", "simple"]
+end
+
+task :fix do
+  Rake::Task["rubocop:autocorrect_all"].invoke
 end
 
 # YARD
