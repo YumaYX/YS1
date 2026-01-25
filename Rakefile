@@ -2,7 +2,7 @@
 
 require "bundler/gem_tasks"
 
-task :bundle_rake do
+task :podman do
   sh <<~CMD
     podman run --userns=keep-id --rm \
       -v #{Dir.pwd}:/app:Z \
