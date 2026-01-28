@@ -41,7 +41,7 @@ Gem::Specification.new do |spec|
     rake:     nil,
     rdoc:     nil,
     rubocop:  nil,
-    yard:     nil,
+    yard:     '<= 0.9.37'
   }.each do |dep, version|
     spec.add_dependency(dep.to_s, version)
   end
