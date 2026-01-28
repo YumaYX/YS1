@@ -49,6 +49,6 @@ end
 
 # CLOBBER
 require "rake/clean"
-CLOBBER.include("testdata/csv_converter/*.json", "input", "_site", ".yardoc", "**/listfiles.md")
+CLOBBER.include("_site", ".yardoc")
 
 task default: %i[test rubocop yard]
