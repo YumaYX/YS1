@@ -43,7 +43,7 @@ task yard: :clobber
 namespace :yard do
   desc "Show YARD stats"
   task :stat do
-    sh %(yard stats --list-undoc)
+    sh %(bundle exec yard stats --list-undoc)
   end
 end
 
