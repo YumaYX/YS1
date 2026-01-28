@@ -36,7 +36,9 @@ jobs:
         uses: actions/configure-pages@v4
       - name: Build with yard
         # Outputs to the './_site' directory by default
-        run: bundle exec rake yard
+        run: |
+          bundle exec rake yard
+          sed -i 's@YS1/@https://yumayx.github.io/YS1/YS1/@g' _site/YS1.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
