@@ -19,7 +19,8 @@ Rake::TestTask.new do |t|
   t.verbose = true
   t.warning = true
 end
-task test: [:clobber, "rubocop:autocorrect"]
+# task test: [:clobber, "rubocop:autocorrect"]
+task test: [:clobber]
 
 # RUBOCOP
 require "rubocop/rake_task"
