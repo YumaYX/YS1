@@ -12,7 +12,7 @@ module YS1
       # @param min_mask [Integer] minimum allowed mask length (smaller = larger networks)
       # @return [Array<Array(String,Integer)>] array of [ip, mask] pairs
       def summarize_ips(ip_list, min_mask: 0)
-        ips = ip_list.uniq.sort.map { IPAddr.new(_1) }.sort_by(&:to_i)
+        ips = ip_list.uniq.map { IPAddr.new(_1) }.sort_by(&:to_i)
 
         ips.chunk_while { |a, b| b.to_i == a.to_i + 1 }
            .flat_map { |c| range_to_cidrs(c.first, c.last, min_mask: min_mask) }
