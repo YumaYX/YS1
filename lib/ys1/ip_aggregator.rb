@@ -73,3 +73,10 @@ module YS1
     end
   end
 end
+
+if __FILE__ == $PROGRAM_NAME
+  file_name = ARGV.size >= 1 ? ARGV.first : "ips.txt"
+  ips = File.read(file_name).lines.map(&:chomp).reject(&:empty?)
+  raw = YS1::IPAggregator.summarize_ips(ips)
+  puts YS1::IPAggregator.cidrs_to_acl(raw)
+end
