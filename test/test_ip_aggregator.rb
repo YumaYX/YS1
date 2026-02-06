@@ -15,27 +15,10 @@ class TestYS1IPAggregator < Minitest::Test
     assert_equal(expected, YS1::IPAggregator.summarize_ips(ips))
   end
 
-  def test_example3
-    ips = 256.times.map { |i| "10.0.0.#{i}" }
-    (24..32).each do |mask|
-      expected = mask == 24 ? [["10.0.0.0", 24]] : gen_expected(mask)
-      result = YS1::IPAggregator.summarize_ips(ips, min_mask: mask == 24 ? 0 : mask)
-      assert_equal(expected, result, "failed at /#{mask}")
-    end
-  end
-
   def test_non_consecutive
     ips = %w[10.0.0.1 10.0.0.3 10.0.0.5]
     expected = [["10.0.0.1", 32], ["10.0.0.3", 32], ["10.0.0.5", 32]]
     assert_equal(expected, YS1::IPAggregator.summarize_ips(ips))
-  end
-
-  def test_min_mask_limit
-    ips = (224..231).map { |i| "192.168.1.#{i}" }
-    result = YS1::IPAggregator.summarize_ips(ips, min_mask: 30)
-    assert(result.all? { |(_, mask)| mask >= 30 })
-    assert_equal("192.168.1.224", result[0].first)
-    assert_equal("192.168.1.228", result[1].first)
   end
 
   def test_duplicate_ips

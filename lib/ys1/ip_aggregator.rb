@@ -6,16 +6,17 @@ module YS1
   # IPAggregator
   module IPAggregator
     class << self
-      # Summarize sequential IPv4 addresses into CIDR blocks.
+      # Summarize a list of IPv4 addresses into aggregated CIDR blocks.
       #
-      # @param ip_list [Array<String>] list of IPv4 address strings
-      # @param min_mask [Integer] minimum allowed mask length (smaller = larger networks)
-      # @return [Array<Array(String,Integer)>] array of [ip, mask] pairs
-      def summarize_ips(ip_list, min_mask: 0)
-        ips = ip_list.uniq.map { IPAddr.new(_1) }.sort_by(&:to_i)
-
-        ips.chunk_while { |a, b| b.to_i == a.to_i + 1 }
-           .flat_map { |c| range_to_cidrs(c.first, c.last, min_mask: min_mask) }
+      # @param ip_list [Array<String>] list of IPv4 address strings (e.g. "192.168.0.1")
+      # @return [Array<Array(String,Integer)>] array of [ip, mask] CIDR entries
+      #
+      # @example
+      #   summarize_ips(["192.168.0.1","192.168.0.2"])
+      #   #=> [["192.168.0.1", 32], ["192.168.0.2", 32]]
+      def summarize_ips(ip_list)
+        ints = ip_list.map { ip_to_i(_1) }.uniq.sort
+        build_ranges(ints).flat_map { |start_ip, end_ip| range_to_cidrs(start_ip, end_ip) }
       end
 
       # Convert CIDR entries into ACL formatted strings.
@@ -28,47 +29,52 @@ module YS1
 
       private
 
+      # rubocop:disable Metrics/MethodLength
+      def build_ranges(ints)
+        ranges = []
+        return ranges if ints.empty?
+
+        s = p = ints[0]
+        ints[1..]&.each do |n|
+          if n == p + 1
+            p = n
+          else
+            (ranges << [s, p]
+             s = p = n)
+          end
+        end
+        ranges << [s, p]
+      end
+      # rubocop:enable Metrics/MethodLength
+
+      def range_to_cidrs(start_ip, end_ip)
+        res = []
+        cur = start_ip
+        while cur <= end_ip
+          align = cur & -cur
+          remain = end_ip - cur + 1
+          block = [align, 1 << Math.log2(remain).floor].min
+          res << [i_to_ip(cur), 32 - Math.log2(block).to_i]
+          cur += block
+        end
+        res
+      end
+
+      def ip_to_i(ip)
+        ip.split(".").inject(0) { |a, o| (a << 8) + o.to_i }
+      end
+
+      def i_to_ip(int)
+        [24, 16, 8, 0].map { |b| (int >> b) & 255 }.join(".")
+      end
+
       def mask_to_netmask(mask)
         [(0xffffffff << (32 - mask)) & 0xffffffff]
           .pack("N").unpack("C4").join(".")
       end
 
-      def cidr_to_acl(entry)
-        ip, mask = entry
-        return "host #{ip}" if mask == 32
-
-        "#{ip} #{mask_to_netmask(mask)}"
-      end
-
-      def largest_block(start_ip, end_ip, min_mask)
-        mask = 32
-        best = [start_ip.to_s, 32]
-
-        while mask >= min_mask
-          block = IPAddr.new("#{start_ip}/#{mask}")
-
-          break unless block.to_range.first == start_ip
-          break if block.to_range.last > end_ip
-
-          best = [start_ip.to_s, mask]
-          mask -= 1
-        end
-
-        best
-      end
-
-      def range_to_cidrs(start_ip, end_ip, min_mask:)
-        res = []
-        cur = start_ip
-
-        while cur <= end_ip
-          ip_str, mask = largest_block(cur, end_ip, min_mask)
-          res << [ip_str, mask]
-          block = IPAddr.new("#{cur}/#{mask}")
-          cur = IPAddr.new(block.to_range.last.to_i + 1, Socket::AF_INET)
-        end
-
-        res
+      def cidr_to_acl((ip, mask))
+        mask == 32 ? "host #{ip}" : "#{ip} #{mask_to_netmask(mask)}"
       end
     end
   end
