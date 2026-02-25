@@ -2,6 +2,9 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 3.0
 
+Style/OneClassPerFile:
+  Enabled: false
+
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
