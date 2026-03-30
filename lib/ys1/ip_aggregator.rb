@@ -1,88 +1,143 @@
 # frozen_string_literal: true
 
 require "ipaddr"
+require_relative "ip"
 
 module YS1
-  # IPAggregator
+  # Provides functionality to aggregate IPv4 addresses into CIDR blocks.
   module IPAggregator
+    # Represents a CIDR block
+    # @attr [String] addr The network address (e.g., "10.0.0.0")
+    # @attr [Integer] prefix The CIDR prefix length (e.g., 24)
+    Cidr = Struct.new(:addr, :prefix)
+
     class << self
-      # Summarize a list of IPv4 addresses into aggregated CIDR blocks.
+      # Convert an IPv4 string into a 32-bit integer
       #
-      # @param ip_list [Array<String>] list of IPv4 address strings (e.g. "192.168.0.1")
-      # @return [Array<Array(String,Integer)>] array of [ip, mask] CIDR entries
-      #
-      # @example
-      #   summarize_ips(["192.168.0.1","192.168.0.2"])
-      #   #=> [["192.168.0.1", 32], ["192.168.0.2", 32]]
-      def summarize_ips(ip_list)
-        ints = ip_list.map { ip_to_i(_1) }.uniq.sort
-        build_ranges(ints).flat_map { |start_ip, end_ip| range_to_cidrs(start_ip, end_ip) }
+      # @param ip [String] IPv4 address (e.g., "192.168.1.1")
+      # @return [Integer] 32-bit integer representation
+      def ip_to_u32(ip)
+        IPAddr.new(ip).to_i
       end
 
-      # Convert CIDR entries into ACL formatted strings.
+      # Convert a 32-bit integer into an IPv4 string
       #
-      # @param entries [Array<Array(String,Integer)>] array of [ip, mask] pairs
-      # @return [Array<String>] ACL formatted lines
-      def cidrs_to_acl(entries)
-        entries.map { |e| cidr_to_acl(e) }
+      # @param number [Integer] 32-bit integer
+      # @return [String] IPv4 address string
+      def u32_to_ip(number)
+        IPAddr.new(number, Socket::AF_INET).to_s
       end
 
-      private
+      # Check if a block of integers represents a continuous sequence
+      #
+      # @param block [Array<Integer>] List of IPs as integers
+      # @return [Boolean] True if all elements are sequential
+      def continuous?(block)
+        block.each_cons(2).all? { |a, b| b == a + 1 }
+      end
 
-      # rubocop:disable Metrics/MethodLength
-      def build_ranges(ints)
-        ranges = []
-        return ranges if ints.empty?
+      # Check if a block is aligned to its size
+      #
+      # @param start [Integer] Starting IP (as integer)
+      # @param size [Integer] Block size
+      # @return [Boolean] True if start is divisible by size
+      def aligned?(start, size)
+        (start % size).zero?
+      end
 
-        s = p = ints[0]
-        ints[1..]&.each do |n|
-          if n == p + 1
-            p = n
+      # Normalize and aggregate IPv4 addresses into CIDR blocks
+      #
+      # @param ip_list [Array<String>] List of IPv4 address strings
+      # @return [Array<Cidr>] Aggregated CIDR blocks
+      def aggregate_ips(ip_list)
+        ints = normalize(ip_list)
+
+        result = []
+        i = 0
+
+        while i < ints.length
+          size = find_block_size(ints, i)
+          result << build_cidr(ints[i], size)
+          i += size
+        end
+
+        result
+      end
+
+      # Convert IP strings into sorted, unique 32-bit integers
+      #
+      # @param ip_list [Array<String>] List of IPv4 address strings
+      # @return [Array<Integer>] Sorted unique integer representations
+      def normalize(ip_list)
+        ip_list.map { |ip| ip_to_u32(ip) }.sort.uniq
+      end
+
+      # Determine the largest valid CIDR block size starting at a given index
+      #
+      # @param ints [Array<Integer>] Sorted IPs as integers
+      # @param index [Integer] Starting index
+      # @return [Integer] Block size (power of 2)
+      def find_block_size(ints, index)
+        size = 1
+
+        loop do
+          next_size = size * 2
+          break if index + next_size > ints.length
+
+          block = ints[index, next_size]
+
+          break unless continuous?(block)
+          break unless aligned?(block[0], next_size)
+
+          size = next_size
+        end
+
+        size
+      end
+
+      # Build a CIDR object from a starting IP and block size
+      #
+      # @param start [Integer] Starting IP as integer
+      # @param size [Integer] Block size
+      # @return [Cidr] CIDR representation
+      def build_cidr(start, size)
+        prefix = 32 - Math.log2(size).to_i
+        mask = prefix.zero? ? 0 : ((~0 << (32 - prefix)) & 0xffffffff)
+        network = start & mask
+
+        Cidr.new(u32_to_ip(network), prefix)
+      end
+
+      # Convert CIDR blocks into ACL format
+      #
+      # @param raw [Array<Cidr>] List of CIDR objects
+      # @return [Array<String>] ACL-formatted
+      def cidrs_to_acl(raw)
+        raw.map do |c|
+          if c.prefix.eql?(32)
+            "host #{c.addr}"
           else
-            (ranges << [s, p]
-             s = p = n)
+            "#{c.addr} #{YS1::IP.netmask(c.prefix)}"
           end
         end
-        ranges << [s, p]
-      end
-      # rubocop:enable Metrics/MethodLength
-
-      def range_to_cidrs(start_ip, end_ip)
-        res = []
-        cur = start_ip
-        while cur <= end_ip
-          align = cur & -cur
-          remain = end_ip - cur + 1
-          block = [align, 1 << Math.log2(remain).floor].min
-          res << [i_to_ip(cur), 32 - Math.log2(block).to_i]
-          cur += block
-        end
-        res
-      end
-
-      def ip_to_i(ip)
-        ip.split(".").inject(0) { |a, o| (a << 8) + o.to_i }
-      end
-
-      def i_to_ip(int)
-        [24, 16, 8, 0].map { |b| (int >> b) & 255 }.join(".")
-      end
-
-      def mask_to_netmask(mask)
-        [(0xffffffff << (32 - mask)) & 0xffffffff]
-          .pack("N").unpack("C4").join(".")
-      end
-
-      def cidr_to_acl((ip, mask))
-        mask == 32 ? "host #{ip}" : "#{ip} #{mask_to_netmask(mask)}"
       end
     end
   end
 end
 
+# CLI entry point
+#
+# Reads IP addresses from a file and prints aggregated CIDR blocks.
 if __FILE__ == $PROGRAM_NAME
+  # @type [String] Input filename (default: ips.txt)
   file_name = ARGV.size >= 1 ? ARGV.first : "ips.txt"
+
+  # @type [Array<String>] List of IPs from file
   ips = File.read(file_name).lines.map(&:chomp).reject(&:empty?)
-  raw = YS1::IPAggregator.summarize_ips(ips)
+
+  # @type [Array<YS1::IPAggregator::Cidr>] Aggregated CIDRs
+  raw = YS1::IPAggregator.aggregate_ips(ips)
+
+  # Output result
   puts YS1::IPAggregator.cidrs_to_acl(raw)
 end
