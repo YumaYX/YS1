@@ -75,8 +75,8 @@ class TestYS1IPAggregator < Minitest::Test
 
   def test_cidrs_to_acl
     raw = [
-      YS1::IPAggregator::Cidr.new("10.0.0.1", 32),
-      YS1::IPAggregator::Cidr.new("10.0.0.0", 24)
+      YS1::IP::Cidr.new("10.0.0.1", 32),
+      YS1::IP::Cidr.new("10.0.0.0", 24)
     ]
 
     acl = YS1::IPAggregator.cidrs_to_acl(raw)

@@ -6,11 +6,6 @@ require_relative "ip"
 module YS1
   # Provides functionality to aggregate IPv4 addresses into CIDR blocks.
   module IPAggregator
-    # Represents a CIDR block
-    # @attr [String] addr The network address (e.g., "10.0.0.0")
-    # @attr [Integer] prefix The CIDR prefix length (e.g., 24)
-    Cidr = Struct.new(:addr, :prefix)
-
     class << self
       # Convert an IPv4 string into a 32-bit integer
       #
@@ -105,7 +100,7 @@ module YS1
         mask = prefix.zero? ? 0 : ((~0 << (32 - prefix)) & 0xffffffff)
         network = start & mask
 
-        Cidr.new(u32_to_ip(network), prefix)
+        YS1::IP::Cidr.new(u32_to_ip(network), prefix)
       end
 
       # Convert CIDR blocks into ACL format
