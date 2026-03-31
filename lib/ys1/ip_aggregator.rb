@@ -77,12 +77,8 @@ module YS1
 
         loop do
           next_size = size * 2
-          break if index + next_size > ints.length
-
           block = ints[index, next_size]
-
-          break unless continuous?(block)
-          break unless aligned?(block[0], next_size)
+          break if (index + next_size > ints.length) || !continuous?(block) || !aligned?(block[0], next_size)
 
           size = next_size
         end
