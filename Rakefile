@@ -19,9 +19,7 @@ Rake::TestTask.new do |t|
   t.verbose = true
   t.warning = true
 end
-# task test: [:clobber, "rubocop:autocorrect"]
 task test: [:clobber]
-
 
 namespace :yard do
   desc "Show YARD stats"
@@ -36,8 +34,8 @@ CLOBBER.include("_site", ".yardoc")
 
 task default: %i[test]
 
-
-if Gem.loaded_specs.has_key?("rubocop") && Gem.loaded_specs.has_key?("yard")
+# @ONLINE
+if Gem.loaded_specs.key?("rubocop") && Gem.loaded_specs.key?("yard")
 
   # RUBOCOP
   require "rubocop/rake_task"
