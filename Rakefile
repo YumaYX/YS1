@@ -22,24 +22,6 @@ end
 # task test: [:clobber, "rubocop:autocorrect"]
 task test: [:clobber]
 
-# RUBOCOP
-require "rubocop/rake_task"
-RuboCop::RakeTask.new(:rubocop) do |t|
-  t.patterns = %w[bin lib test Rakefile]
-  t.options = ["--format", "simple"]
-end
-
-task :fix do
-  Rake::Task["rubocop:autocorrect_all"].invoke
-end
-
-# YARD
-require "yard"
-YARD::Rake::YardocTask.new do |t|
-  t.files = FileList.new %w[lib/*.rb lib/**/*.rb]
-  t.options += ["--output-dir", "_site"]
-end
-task yard: :clobber
 
 namespace :yard do
   desc "Show YARD stats"
@@ -52,4 +34,29 @@ end
 require "rake/clean"
 CLOBBER.include("_site", ".yardoc")
 
-task default: %i[test rubocop yard]
+task default: %i[test]
+
+
+if Gem.loaded_specs.has_key?("rubocop") && Gem.loaded_specs.has_key?("yard")
+
+  # RUBOCOP
+  require "rubocop/rake_task"
+  RuboCop::RakeTask.new(:rubocop) do |t|
+    t.patterns = %w[bin lib test Rakefile]
+    t.options = ["--format", "simple"]
+  end
+
+  task :fix do
+    Rake::Task["rubocop:autocorrect_all"].invoke
+  end
+
+  # YARD
+  require "yard"
+  YARD::Rake::YardocTask.new do |t|
+    t.files = FileList.new %w[lib/*.rb lib/**/*.rb]
+    t.options += ["--output-dir", "_site"]
+  end
+  task yard: :clobber
+
+  task default: %i[test rubocop yard]
+end
