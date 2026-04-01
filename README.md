@@ -60,10 +60,10 @@ Set up the environment using the following command.
 sudo dnf -y install "@Development Tools" ruby* # git make
 ```
 
-Use the system rake command.
+Download the ZIP from GitHub, then run the rake and gem commands in that directory.
 
 ```sh
-rake
+rake && gem build ys1.gemspec && gem install ys1*.gem --local
 ```
 
 ## Contributing
