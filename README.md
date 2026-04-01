@@ -51,7 +51,7 @@ require "ys1"
 - `gem install`: `ruby -rys1 -e 'p YS1::VERSION'`
 - `bundle install`: `bundle exec ruby -rys1 -e 'p YS1::VERSION'`
 
-### Offline Usage
+### Offline Usage @ RHEL Clones
 
 Set up the environment using the following command.
 
