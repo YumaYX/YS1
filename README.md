@@ -51,6 +51,21 @@ require "ys1"
 - `gem install`: `ruby -rys1 -e 'p YS1::VERSION'`
 - `bundle install`: `bundle exec ruby -rys1 -e 'p YS1::VERSION'`
 
+### Offline Usage
+
+Set up the environment using the following command.
+
+```sh
+# example @ AlmaLinux release 10.1 (Heliotrope Lion)
+sudo dnf -y install "@Development Tools" ruby* # git make
+```
+
+Use the system rake command.
+
+```sh
+rake
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/YumaYX/ys1.
