@@ -35,7 +35,8 @@ CLOBBER.include("_site", ".yardoc")
 task default: %i[test]
 
 # @ONLINE
-if Gem.loaded_specs.key?("rubocop") && Gem.loaded_specs.key?("yard")
+gems = %w[rubocop yard]
+if gems.select { |g| Gem.loaded_specs.key?(g) }.size == gems.size
 
   # RUBOCOP
   require "rubocop/rake_task"
