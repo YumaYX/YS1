@@ -40,18 +40,7 @@ bundle install
 
 bundle: Installs and manages gems per project based on the Gemfile and Gemfile.lock, resolving both runtime and development dependencies and isolating them within the project.
 
-## Usage
-
-in your codes:
-
-```ruby
-require "ys1"
-```
-
-- `gem install`: `ruby -rys1 -e 'p YS1::VERSION'`
-- `bundle install`: `bundle exec ruby -rys1 -e 'p YS1::VERSION'`
-
-### Offline Usage on RHEL Clones
+### Offline Installation on RHEL Clones
 
 Set up the environment using the following command.
 
@@ -65,6 +54,18 @@ Download the ZIP from GitHub, then run the rake and gem commands in that directo
 ```sh
 rake && gem build ys1.gemspec && gem install ys1*.gem --local
 ```
+
+
+## Usage
+
+in your codes:
+
+```ruby
+require "ys1"
+```
+
+- `gem install`: `ruby -rys1 -e 'p YS1::VERSION'`
+- `bundle install`: `bundle exec ruby -rys1 -e 'p YS1::VERSION'`
 
 ## Contributing
 
