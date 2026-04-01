@@ -32,7 +32,7 @@ end
 require "rake/clean"
 CLOBBER.include("_site", ".yardoc")
 
-task default: %i[test]
+task default: :test
 
 # @ONLINE
 gems = %w[rubocop yard]
