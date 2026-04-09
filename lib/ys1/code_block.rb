@@ -6,6 +6,7 @@ module YS1
   module CodeBlock
     class << self
       # rubocop:disable Metrics/MethodLength
+
       # Extracts all triple-backtick code blocks from the given text.
       #
       # A block starts with a line beginning with ``` and ends with a line
@@ -42,12 +43,9 @@ module YS1
       #   an empty string if the block has no body,
       #   or nil if the input is nil
       def body(block)
-        return unless block
+        return nil if block.nil?
 
-        lines = block.chomp.lines
-        return "" if lines.size <= 2
-
-        lines[1..-2].join
+        block.to_s.chomp.sub(/\A.*?```[^\n]*\n/m, "").sub(/```.*\z/m, "")
       end
     end
   end
