@@ -2,6 +2,13 @@
 
 require "bundler/gem_tasks"
 
+task :init do
+  sh <<~CMD
+    bundle install
+    bundle exec rake
+  CMD
+end
+
 task :podman do
   sh <<~CMD
     podman run --userns=keep-id --rm \
