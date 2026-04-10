@@ -2,6 +2,7 @@
 
 require "bundler/gem_tasks"
 
+desc "Build YS1 env with bundle"
 task :init do
   sh <<~CMD
     bundle install
@@ -9,6 +10,7 @@ task :init do
   CMD
 end
 
+desc "Test in podman"
 task :podman do
   sh <<~CMD
     podman run --userns=keep-id --rm \
