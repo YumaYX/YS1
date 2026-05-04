@@ -1,10 +1,15 @@
 # YS1
 
+
+[![Test](https://github.com/YumaYX/YS1/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/YumaYX/YS1/actions/workflows/test.yml)
+
+
 home
 : <https://github.com/YumaYX/YS1>
 
 docs
 : <https://yumayx.github.io/YS1>
+
 
 ## Description
 
