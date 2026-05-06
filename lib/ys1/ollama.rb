@@ -4,7 +4,7 @@ require "net/http"
 require "uri"
 require "json"
 
-require_relative "ollama_module"
+require_relative "ollama/module"
 require_relative "ollama/options"
 
 module YS1
@@ -22,7 +22,7 @@ module YS1
       # @return [Net::HTTPResponse] raw HTTP response
       def request(prompt)
         url = URI.parse("http://localhost:11434/api/generate")
-        data = YS1::OllamaModule.ollama_request_data(prompt, opts)
+        data = YS1::Ollama::Module.ollama_request_data(prompt, opts)
 
         http = Net::HTTP.new(url.host, url.port)
         http.open_timeout = nil
@@ -53,10 +53,10 @@ module YS1
       def stream(prompt, &on_chunk)
         url = URI.parse("http://localhost:11434/api/chat")
 
-        http = YS1::OllamaModule.build_http(url)
-        request = YS1::OllamaModule.build_request(url, YS1::OllamaModule.request_body(prompt, opts))
+        http = YS1::Ollama::Module.build_http(url)
+        request = YS1::Ollama::Module.build_request(url, YS1::Ollama::Module.request_body(prompt, opts))
 
-        YS1::OllamaModule.execute(http, request, &on_chunk)
+        YS1::Ollama::Module.execute(http, request, &on_chunk)
       end
     end
     # Default model
