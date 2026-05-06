@@ -5,6 +5,7 @@ require "uri"
 require "json"
 
 require_relative "ollama_module"
+require_relative "ollama/options"
 
 module YS1
   # Namespace for interacting with the Ollama API
@@ -12,10 +13,11 @@ module YS1
     class << self
       # @return [String] the model name used for requests
       attr_accessor :model
-      # @return [Integer] the num_ctx used for requests
-      attr_accessor :num_ctx
-      # @return [Float] temperature value
-      attr_accessor :temperature
+      # # @return [Integer] the num_ctx used for requests
+      # attr_accessor :num_ctx
+      # # @return [Float] temperature value
+      # attr_accessor :temperature
+      attr_accessor :opts
 
       # Sends a synchronous request to the Ollama generate endpoint
       #
@@ -23,7 +25,7 @@ module YS1
       # @return [Net::HTTPResponse] raw HTTP response
       def request(prompt)
         url = URI.parse("http://localhost:11434/api/generate")
-        data = YS1::OllamaModule.ollama_request_data(prompt)
+        data = YS1::OllamaModule.ollama_request_data(prompt, self.opts)
 
         http = Net::HTTP.new(url.host, url.port)
         http.open_timeout = nil
@@ -55,21 +57,28 @@ module YS1
         url = URI.parse("http://localhost:11434/api/chat")
 
         http = YS1::OllamaModule.build_http(url)
-        request = YS1::OllamaModule.build_request(url, YS1::OllamaModule.request_body(prompt))
+        request = YS1::OllamaModule.build_request(url, YS1::OllamaModule.request_body(prompt, self.opts))
 
         YS1::OllamaModule.execute(http, request, &on_chunk)
       end
     end
     # Default model
     self.model = "gemma4"
-    self.num_ctx = 8192
-    self.temperature = 0.8
+
+    self.opts = YS1::Ollama::Options.new
+    # default option values
+    self.opts.add("num_ctx", 8192)
+    self.opts.add("temperature", 0.8)
   end
 end
 
 # Example usage when run directly
 if __FILE__ == $PROGRAM_NAME
+  YS1::Ollama.model = "gemma3n"
+  YS1::Ollama.opts.add("num_ctx", 1024)
+  YS1::Ollama.opts.add("temperature", 0.1)
   puts YS1::Ollama.request_response("hi")
-  YS1::Ollama.model = "gemma4"
+
+  YS1::Ollama.model = "gemma3n"
   YS1::Ollama.stream("bye")
 end

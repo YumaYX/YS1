@@ -8,14 +8,11 @@ module YS1
       #
       # @param prompt [String] the input prompt
       # @return [Hash] request body as a hash
-      def ollama_request_data(prompt)
+      def ollama_request_data(prompt, opts)
         {
           model: YS1::Ollama.model,
           prompt: prompt.to_s,
-          options: {
-            num_ctx: YS1::Ollama.num_ctx,
-            temperature: YS1::Ollama.temperature
-          },
+          options: opts.to_h,
           stream: false
         }
       end
@@ -24,14 +21,11 @@ module YS1
       #
       # @param prompt [String]
       # @return [Hash]
-      def request_body(prompt)
+      def request_body(prompt, opts)
         {
           model: YS1::Ollama.model,
           messages: [{ role: "user", content: prompt.to_s }],
-          options: {
-            num_ctx: YS1::Ollama.num_ctx,
-            temperature: YS1::Ollama.temperature
-          },
+          options: opts.to_h,
           stream: true
         }
       end
