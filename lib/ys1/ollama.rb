@@ -73,7 +73,7 @@ end
 if __FILE__ == $PROGRAM_NAME
   YS1::Ollama.model = "gemma3n"
   YS1::Ollama.opts.add("num_ctx", 1024)
-                  .add("temperature", 0.1)
+             .add("temperature", 0.1)
   puts YS1::Ollama.request_response("hi")
 
   YS1::Ollama.model = "gemma3n"
