@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-require 'base64'
-require_relative '../ollama'
+require "base64"
+require_relative "../ollama"
 
 module YS1
+  # Ollama
   module Ollama
     # Ollama OCR
     extend YS1::Ollama

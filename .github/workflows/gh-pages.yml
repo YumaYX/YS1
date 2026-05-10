@@ -33,7 +33,7 @@ jobs:
       - name: Build with yard
         # Outputs to the './_site' directory by default
         run: |
-          bundle exec rake yard
+          bundle exec rake
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
