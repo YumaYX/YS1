@@ -1,7 +1,7 @@
 # YS1
 
 
-[![Test](https://github.com/YumaYX/YS1/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/YumaYX/YS1/actions/workflows/test.yml)
+[![Test](https://github.com/YumaYX/YS1/actions/workflows/test.yml/badge.svg?branch=workshop)](https://github.com/YumaYX/YS1/actions/workflows/test.yml)
 
 
 home
