@@ -10,8 +10,6 @@ require_relative "dynamic_object"
 module YS1
   # Namespace for interacting with the Ollama API
   module Ollama
-    extend YS1::Ollama::Module
-
     class << self
       # @return [DynamicObject] the data for requests
       attr_accessor :data
