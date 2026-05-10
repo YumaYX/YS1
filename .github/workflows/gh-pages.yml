@@ -1,9 +1,9 @@
 name: Deploy Pages
 
 on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["master"]
+  workflow_run:
+    workflows: ["merge-push"]
+    types: [completed]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -30,7 +30,7 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3'
+          ruby-version: "3"
           bundler-cache: true
       - name: Setup Pages
         uses: actions/configure-pages@v4
