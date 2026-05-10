@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'tempfile'
+require "tempfile"
 require_relative "helper"
 
 class TestYS1CSV < Minitest::Test
   def setup
     # Create a temporary file for CSV data
-    @temp_file = Tempfile.new(['test', '.csv'])
+    @temp_file = Tempfile.new(["test", ".csv"])
     @file_path = @temp_file.path
 
     # Write dummy CSV content: Header1,Header2\nValue1A,Value1B\nValue2A,Value2B
@@ -21,7 +21,7 @@ class TestYS1CSV < Minitest::Test
 
   def teardown
     # Clean up the temporary file
-    @temp_file.unlink if @temp_file
+    @temp_file&.unlink
   end
 
   # Test initialization
@@ -30,6 +30,7 @@ class TestYS1CSV < Minitest::Test
     assert_equal @file_path, csv_reader.file_path
   end
 
+  # rubocop:disable Metrics/AbcSize
   # Test the read method
   def test_read
     csv_reader = YS1::CSV.new(@file_path)
@@ -40,11 +41,12 @@ class TestYS1CSV < Minitest::Test
     assert_equal 2, data.length
 
     # Verify content structure
-    assert_equal "Apple", data[0]['Header1']
-    assert_equal "100", data[0]['Header2']
-    assert_equal "Banana", data[1]['Header1']
-    assert_equal "200", data[1]['Header2']
+    assert_equal "Apple", data[0]["Header1"]
+    assert_equal "100", data[0]["Header2"]
+    assert_equal "Banana", data[1]["Header1"]
+    assert_equal "200", data[1]["Header2"]
   end
+  # rubocop:enable Metrics/AbcSize
 
   # Test the to_json method (and dependency on read)
   def test_to_json
@@ -58,8 +60,7 @@ class TestYS1CSV < Minitest::Test
     assert_equal 2, parsed_data.length
 
     # Check content after JSON serialization/deserialization
-    assert_equal "Apple", parsed_data[0]['Header1']
-    assert_equal "100", parsed_data[0]['Header2']
+    assert_equal "Apple", parsed_data[0]["Header1"]
+    assert_equal "100", parsed_data[0]["Header2"]
   end
 end
-
