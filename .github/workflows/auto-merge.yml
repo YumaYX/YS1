@@ -16,7 +16,7 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout main
+      - name: Checkout master
         uses: actions/checkout@v4
         with:
           ref: master
@@ -27,11 +27,11 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-      - name: Merge workshop into main
+      - name: Merge workshop into master
         run: |
           git fetch origin workshop
-          git merge origin/workshop --no-ff -m "Auto merge workshop into main"
+          git merge origin/workshop --no-ff -m "Auto merge workshop into master"
 
       - name: Push changes
         run: |
-          git push origin main
+          git push origin master

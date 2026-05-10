@@ -9,7 +9,7 @@ jobs:
   test:
     runs-on: ${{ matrix. os }}
     strategy:
-      max-parallel: 1
+      max-parallel: 4
       fail-fast: true
       matrix:
         os: [ubuntu-latest]
