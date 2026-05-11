@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../ollama'
+require_relative "../ollama"
 
 module YS1
   # Ollama
@@ -15,11 +15,11 @@ module YS1
         # @return [String] The formatted prompt string.
         def prompt_template(lang, text)
           <<~PROMPT
-          #{text}
-          ---
-          - translate into #{lang.to_s}".
-          - You must output only the answer itself.
-          - Do not add notes, comments, markdown, or formatting.
+            #{text}
+            ---
+            - translate into #{lang}".
+            - You must output only the answer itself.
+            - Do not add notes, comments, markdown, or formatting.
           PROMPT
         end
 
