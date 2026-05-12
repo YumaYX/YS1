@@ -24,8 +24,8 @@ module YS1
     # @param child The child objects to be added.
     def add_child(*child)
       child.each do |element|
-        if element.respond_to?(:to_ary)
-          add_child(*element.to_ary)
+        if element.is_a?(Array)
+          add_child(*element)
         else
           @children << element
         end
