@@ -2,29 +2,11 @@
 
 require "ipaddr"
 
+require_relative "ip/cidr"
+
 module YS1
   # IP
   module IP
-    # Represents a CIDR block
-    #
-    # @attr [String] addr The network address (e.g., "10.0.0.0")
-    # @attr [Integer] prefix The CIDR prefix length (e.g., 24)
-    #
-    # @example Creating and using a CIDR object
-    #   cidr = YS1::IP::Cidr.new("10.0.0.0", 24)
-    #
-    #   cidr.addr
-    #   # => "10.0.0.0"
-    #
-    #   cidr.prefix
-    #   # => 24
-    #
-    #   # Example: build CIDR notation string
-    #   "#{cidr.addr}/#{cidr.prefix}"
-    #   # => "10.0.0.0/24"
-    #
-    Cidr = Struct.new(:addr, :prefix)
-
     class << self
       #
       # Convert a CIDR prefix length to an IPv4 netmask string.
