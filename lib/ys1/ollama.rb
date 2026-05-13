@@ -59,8 +59,8 @@ module YS1
 
     # Default data
     self.data = Object.new
-    self.data.extend(YS1::DynamicObject)
-    self.data.model = "gemma4"
+    data.extend(YS1::DynamicObject)
+    data.model = "gemma4"
 
     # Default data options
     data.options = Object.new
