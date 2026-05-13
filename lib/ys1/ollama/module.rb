@@ -27,7 +27,7 @@ module YS1
         # @return [Hash] request body as a hash
         def request_body(prompt, data)
           req_data = JSON.parse(data.data.to_json)
-          req_data["essages"] = [{ role: "user", content: prompt.to_s }]
+          req_data["messages"] = [{ role: "user", content: prompt.to_s }]
           req_data["stream"] = true
           req_data["options"] = data.options.data # Object."instance variable"."method"
           req_data
