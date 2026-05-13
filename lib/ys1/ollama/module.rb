@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+          require 'json'
+
 module YS1
   module Ollama
     # Ollama Module module
@@ -11,11 +13,11 @@ module YS1
         # @param data [Hash] the data parameter
         # @return [Hash] request body as a hash
         def ollama_request_data(prompt, data)
-          req_data = Marshal.load(Marshal.dump(data))
-          req_data.prompt = prompt
-          req_data.stream = false
-          req_data.options = data.options.data # Object."instance variable"."method"
-          req_data.data
+          req_data = JSON.parse(data.data.to_json)
+          req_data["prompt"] = prompt
+          req_data["stream"] = false
+          req_data["options"] = data.options.data # Object."instance variable"."method"
+          req_data
         end
 
         # Builds the request body for streaming chat
@@ -24,11 +26,11 @@ module YS1
         # @param data [Hash] the data parameter
         # @return [Hash] request body as a hash
         def request_body(prompt, data)
-          req_data = Marshal.load(Marshal.dump(data))
-          req_data.messages = [{ role: "user", content: prompt.to_s }]
-          req_data.stream = true
-          req_data.options = data.options.data # Object."instance variable"."method"
-          req_data.data
+          req_data = JSON.parse(data.data.to_json)
+          req_data["messages"] = [{ role: "user", content: prompt.to_s }]
+          req_data["stream"] = true
+          req_data["options"] = data.options.data # Object."instance variable"."method"
+          req_data
         end
 
         # Initializes HTTP client
