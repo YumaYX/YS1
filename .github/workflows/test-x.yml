@@ -1,7 +1,9 @@
 name: Test x
 on:
-  push:
-    branches: ["workshop"]
+  workflow_run:
+    workflows: ["Run RuboCop"]
+    types:
+      - completed
 jobs:
   testwin:
     runs-on: ${{ matrix. os }}
