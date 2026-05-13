@@ -1,11 +1,11 @@
 # CI/CD
 
 1. Lint
-  - with Rubocop
+    - with Rubocop
 1. Test
-  - Linux
-  - Windows
+    - Linux
+    - Windows
 1. Merge
-  - to master branch
+    - to master branch
 1. Deploy
-  - GitHub Pages
+    - GitHub Pages
