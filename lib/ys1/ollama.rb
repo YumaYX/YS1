@@ -18,7 +18,7 @@ module YS1
       #
       # @param prompt [String] the input prompt
       # @return [Net::HTTPResponse] raw HTTP response
-      def request(prompt)
+      def request_response(prompt)
         url = URI.parse("http://localhost:11434/api/generate")
         http = Net::HTTP.new(url.host, url.port)
         http.open_timeout = nil
@@ -36,8 +36,8 @@ module YS1
       #
       # @param prompt [String] the input prompt
       # @return [String] generated response text
-      def request_response(prompt)
-        http_response = YS1::Ollama.request(prompt)
+      def request(prompt)
+        http_response = YS1::Ollama.request_response(prompt)
         json = JSON.parse(http_response.body)
 
         json.fetch("response")
@@ -72,7 +72,7 @@ end
 if __FILE__ == $PROGRAM_NAME
   YS1::Ollama.data.model = "gemma4:e2b"
   YS1::Ollama.data.options.temperature = 0.1
-  puts YS1::Ollama.request_response("hi.")
+  puts YS1::Ollama.request("hi.")
 
   YS1::Ollama.data.model = "gemma4:e2b"
   YS1::Ollama.data.options.temperature = 0.2
