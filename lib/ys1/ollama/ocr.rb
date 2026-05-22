@@ -36,7 +36,7 @@ module YS1
           YS1::Ollama.data.images = [image_b64]
           YS1::Ollama.data.options.num_ctx = 8196
           YS1::Ollama.data.options.temperature = 0.1
-          YS1::Ollama.request_response(YS1::Ollama::OCR::PROMPT)
+          YS1::Ollama.request(YS1::Ollama::OCR::PROMPT)
         end
       end
     end
