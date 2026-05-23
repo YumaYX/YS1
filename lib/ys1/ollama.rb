@@ -68,14 +68,4 @@ module YS1
   end
 end
 
-# Example usage when run directly
-if __FILE__ == $PROGRAM_NAME
-  YS1::Ollama.data.model = "gemma4:e2b"
-  YS1::Ollama.data.options.temperature = 0.1
-  puts YS1::Ollama.request("hi.")
-
-  YS1::Ollama.data.model = "gemma4:e2b"
-  YS1::Ollama.data.options.temperature = 0.2
-  YS1::Ollama.data.options.num_ctx = 1024
-  YS1::Ollama.stream("bye.")
-end
+YS1::Ollama.stream(ARGV.first) if __FILE__ == $PROGRAM_NAME

@@ -30,6 +30,15 @@ Rake::TestTask.new do |t|
 end
 task test: [:clobber]
 
+# test:ollama
+namespace :test do
+  Rake::TestTask.new(:ollama) do |t|
+    t.test_files = FileList["test/ollama/test_*.rb"]
+    t.verbose = true
+    t.warning = true
+  end
+end
+
 namespace :yard do
   desc "Show YARD stats"
   task :stat do
