@@ -39,6 +39,6 @@ module YS1
 end
 
 if __FILE__ == $PROGRAM_NAME
-  YS1::Ollama::Trans.into(:Japanese, "hi")
-  YS1::Ollama::Trans.into(:English, "こんにちは")
+  exit unless ARGV.size.eql?(2)
+  YS1::Ollama::Trans.into(ARGV[0], ARGV[1])
 end
