@@ -30,7 +30,7 @@ Rake::TestTask.new do |t|
 end
 task test: [:clobber]
 
-# test:other
+# test:ollama
 namespace :test do
   Rake::TestTask.new(:ollama) do |t|
     t.test_files = FileList["test/ollama/test_*.rb"]
