@@ -77,4 +77,3 @@ if gems.select { |g| Gem.loaded_specs.key?(g) }.size == gems.size
 
   task default: %i[test rubocop yard]
 end
-
