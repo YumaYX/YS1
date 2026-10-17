@@ -85,9 +85,43 @@ ruby_info.to_anon_class.new
 - `gem install`: `ruby -rys1 -e 'p YS1::VERSION'`
 - `bundle install`: `bundle exec ruby -rys1 -e 'p YS1::VERSION'`
 
+### Ollama
+
+Requires a running [Ollama](https://ollama.com) server at `http://localhost:11434`.
+
+```ruby
+require "ys1"
+
+# Non-streaming generation (returns the response text)
+YS1::Ollama.request("Give me one fun fact about Ruby.", model: "gemma4")
+#=> "Ruby was created by Yukihiro Matsumoto."
+
+# Streaming (yields chunks and returns the full text)
+YS1::Ollama.stream("Tell me a short story.", model: "gemma4") { |chunk| print chunk }
+
+# OCR: extract the text from an image
+YS1::Ollama::OCR.from_file("scan.png", model: "gemma4")
+#=> "Invoice #123"
+
+# Translation (streams by default)
+YS1::Ollama::Trans.into(:English, "こんにちは") { |chunk| print chunk }
+```
+
+The model name and model options are passed per call, so separate calls never
+affect each other. `YS1::Ollama::DEFAULT_MODEL` is used when `model:` is omitted.
+
+The command-line entry points are installed as executables:
+
+```sh
+ys1 "Tell me a short story."      # stream a response
+ys1-ocr scan.png                  # OCR an image
+ys1-trans English "こんにちは"      # translate text
+ys1-agg ips.txt                   # aggregate IPv4 addresses into ACL entries
+```
+
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/YumaYX/ys1.
+Bug reports and pull requests are welcome on GitHub at https://github.com/YumaYX/YS1.
 
 ## License
 

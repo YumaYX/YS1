@@ -28,7 +28,6 @@ Rake::TestTask.new do |t|
   t.verbose = true
   t.warning = true
 end
-task test: [:clobber]
 
 # test:ollama
 namespace :test do
@@ -59,7 +58,7 @@ if gems.select { |g| Gem.loaded_specs.key?(g) }.size == gems.size
   # RUBOCOP
   require "rubocop/rake_task"
   RuboCop::RakeTask.new(:rubocop) do |t|
-    t.patterns = %w[bin lib test Rakefile]
+    t.patterns = %w[bin exe lib test Rakefile]
     t.options = ["--format", "simple"]
   end
 

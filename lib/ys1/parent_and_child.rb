@@ -21,15 +21,12 @@ module YS1
     #
     # Adds child objects to the array of children.
     #
+    # Nested arrays are flattened, so `add_child(1, [2, [3]])` appends 1, 2
+    # and 3.
+    #
     # @param child The child objects to be added.
     def add_child(*child)
-      child.each do |element|
-        if element.is_a?(Array)
-          add_child(*element)
-        else
-          @children << element
-        end
-      end
+      @children.concat(child.flatten)
     end
 
     #

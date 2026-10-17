@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "ys1"
+
+file_name = ARGV.first || "ips.txt"
+ips = File.read(file_name).lines.map(&:chomp).reject(&:empty?)
+raw = YS1::IP::Aggregator.aggregate_ips(ips)
+puts YS1::IP::Aggregator.cidrs_to_acl(raw)

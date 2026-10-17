@@ -6,12 +6,20 @@ require_relative "../ip"
 module YS1
   module IP
     # Provides functionality to aggregate IPv4 addresses into CIDR blocks.
+    #
+    # Only {.aggregate_ips}, {.cidrs_to_acl} and the integer/string
+    # conversions are public; the block-detection helpers are implementation
+    # details.
     module Aggregator
       class << self
         # Convert an IPv4 string into a 32-bit integer
         #
         # @param ip [String] IPv4 address (e.g., "192.168.1.1")
         # @return [Integer] 32-bit integer representation
+        #
+        # @example
+        #   YS1::IP::Aggregator.ip_to_u32("0.0.0.1")
+        #   # => 1
         def ip_to_u32(ip)
           IPAddr.new(ip).to_i
         end
@@ -20,9 +28,57 @@ module YS1
         #
         # @param number [Integer] 32-bit integer
         # @return [String] IPv4 address string
+        #
+        # @example
+        #   YS1::IP::Aggregator.u32_to_ip(1)
+        #   # => "0.0.0.1"
         def u32_to_ip(number)
           IPAddr.new(number, Socket::AF_INET).to_s
         end
+
+        # Normalize and aggregate IPv4 addresses into CIDR blocks
+        #
+        # @param ip_list [Array<String>] List of IPv4 address strings
+        # @return [Array<Cidr>] Aggregated CIDR blocks
+        #
+        # @example
+        #   YS1::IP::Aggregator.aggregate_ips(%w[10.0.0.2 10.0.0.3]).map(&:to_s)
+        #   # => ["10.0.0.2/31"]
+        def aggregate_ips(ip_list)
+          ints = normalize(ip_list)
+
+          result = []
+          i = 0
+
+          while i < ints.length
+            size = find_block_size(ints, i)
+            result << build_cidr(ints[i], size)
+            i += size
+          end
+
+          result
+        end
+
+        # Convert CIDR blocks into ACL format
+        #
+        # @param raw [Array<Cidr>] List of CIDR objects
+        # @return [Array<String>] ACL-formatted
+        #
+        # @example
+        #   cidrs = [YS1::IP::Cidr.new("10.0.0.1", 32)]
+        #   YS1::IP::Aggregator.cidrs_to_acl(cidrs)
+        #   # => ["host 10.0.0.1"]
+        def cidrs_to_acl(raw)
+          raw.map do |c|
+            if c.prefix.eql?(32)
+              "host #{c.addr}"
+            else
+              "#{c.addr} #{YS1::IP.netmask(c.prefix)}"
+            end
+          end
+        end
+
+        private
 
         # Check if a block of integers represents a continuous sequence
         #
@@ -39,25 +95,6 @@ module YS1
         # @return [Boolean] True if start is divisible by size
         def aligned?(start, size)
           (start % size).zero?
-        end
-
-        # Normalize and aggregate IPv4 addresses into CIDR blocks
-        #
-        # @param ip_list [Array<String>] List of IPv4 address strings
-        # @return [Array<Cidr>] Aggregated CIDR blocks
-        def aggregate_ips(ip_list)
-          ints = normalize(ip_list)
-
-          result = []
-          i = 0
-
-          while i < ints.length
-            size = find_block_size(ints, i)
-            result << build_cidr(ints[i], size)
-            i += size
-          end
-
-          result
         end
 
         # Convert IP strings into sorted, unique 32-bit integers
@@ -99,31 +136,7 @@ module YS1
 
           YS1::IP::Cidr.new(u32_to_ip(network), prefix)
         end
-
-        # Convert CIDR blocks into ACL format
-        #
-        # @param raw [Array<Cidr>] List of CIDR objects
-        # @return [Array<String>] ACL-formatted
-        def cidrs_to_acl(raw)
-          raw.map do |c|
-            if c.prefix.eql?(32)
-              "host #{c.addr}"
-            else
-              "#{c.addr} #{YS1::IP.netmask(c.prefix)}"
-            end
-          end
-        end
       end
     end
   end
-end
-
-# CLI entry point
-#
-# Reads IP addresses from a file and prints aggregated CIDR blocks.
-if __FILE__ == $PROGRAM_NAME
-  file_name = ARGV.size >= 1 ? ARGV.first : "ips.txt"
-  ips = File.read(file_name).lines.map(&:chomp).reject(&:empty?)
-  raw = YS1::IP::Aggregator.aggregate_ips(ips)
-  puts YS1::IP::Aggregator.cidrs_to_acl(raw)
 end

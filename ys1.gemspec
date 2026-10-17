@@ -38,15 +38,15 @@ Gem::Specification.new do |spec|
   # spec.add_dependency "example-gem", "~> 1.0"
   {
     base64: nil,
-    csv: nil,
-    rdoc: nil,
-    minitest: nil,
-    rake: nil
+    csv: nil
   }.each do |dep, version|
     spec.add_dependency(dep.to_s, version)
   end
 
   {
+    minitest: nil,
+    rake: nil,
+    rdoc: nil,
     rubocop: nil,
     yard: nil
   }.each do |dep, version|

@@ -1,19 +1,8 @@
 # frozen_string_literal: true
 
 require_relative "helper"
-require "tempfile"
 
-class TestYS1Join < Minitest::Test
-  def with_tempfile(lines)
-    file = Tempfile.new("ys1")
-    file.write(lines.join("\n"))
-    file.rewind
-    yield file.path
-  ensure
-    file.close
-    file.unlink
-  end
-
+class TestYS1JoinFile < Minitest::Test
   def test_cross_from_files_basic
     with_tempfile(%w[1 2]) do |file1|
       with_tempfile(%w[a b]) do |file2|

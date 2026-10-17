@@ -30,8 +30,6 @@ module YS1
           .sub(/\n?```[ \t]*\z/, "")
       end
 
-      # rubocop:disable Metrics/MethodLength
-
       # Extracts all triple-backtick code blocks from the given text.
       #
       # A block starts with a line beginning with ``` and ends with a line
@@ -41,24 +39,8 @@ module YS1
       # @return [Array<String>] an array of full code block strings,
       #   including the opening and closing backticks
       def to_arr_from(text)
-        blocks = []
-        buffer = nil
-
-        text.each_line do |line|
-          if buffer
-            buffer << line
-            if line.match?(/^```\s*\z/)
-              blocks << buffer
-              buffer = nil
-            end
-          elsif line.start_with?("```")
-            buffer = line.to_s
-          end
-        end
-
-        blocks
+        text.scan(/^```[^\n]*\n(?:[^\n]*\n)*?^```[ \t]*(?:\n|\z)/m)
       end
-      # rubocop:enable Metrics/MethodLength
 
       # Returns the inner body of a code block, excluding the
       # opening and closing triple backtick lines.
@@ -70,7 +52,7 @@ module YS1
       def body(block)
         return nil if block.nil?
 
-        block.to_s.chomp.sub(/\A.*?```[^\n]*\n/m, "").sub(/```.*\z/m, "")
+        block.to_s.lines[1..-2].join
       end
     end
   end

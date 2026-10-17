@@ -22,4 +22,36 @@ class TestYS1IP < Minitest::Test
   def test_netmask0
     assert_equal "0.0.0.0", YS1::IP.netmask(0)
   end
+
+  def test_netmask_invalid_prefix_negative
+    assert_raises(ArgumentError) do
+      YS1::IP.netmask(-1)
+    end
+  end
+
+  def test_netmask_invalid_prefix_too_large
+    assert_raises(ArgumentError) do
+      YS1::IP.netmask(33)
+    end
+  end
+
+  def test_netmask_invalid_prefix_not_integer
+    assert_raises(ArgumentError) do
+      YS1::IP.netmask("24")
+    end
+  end
+
+  def test_cidr_accessors
+    cidr = YS1::IP::Cidr.new("192.168.1.0", 24)
+
+    assert_equal "192.168.1.0", cidr.addr
+    assert_equal 24, cidr.prefix
+    assert_equal "192.168.1.0/24", cidr.to_s
+  end
+
+  def test_cidr_invalid_prefix
+    assert_raises(ArgumentError) do
+      YS1::IP::Cidr.new("192.168.1.0", 33)
+    end
+  end
 end

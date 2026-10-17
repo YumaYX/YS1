@@ -1,66 +1,50 @@
 # frozen_string_literal: true
 
-require "tempfile"
 require_relative "helper"
 
 class TestYS1CSV < Minitest::Test
-  def setup
-    # Create a temporary file for CSV data
-    @temp_file = Tempfile.new(["test", ".csv"])
-    @file_path = @temp_file.path
+  ROWS = [
+    "Header1,Header2",
+    "Apple,100",
+    "Banana,200"
+  ].freeze
 
-    # Write dummy CSV content: Header1,Header2\nValue1A,Value1B\nValue2A,Value2B
-    @csv_content = <<~CSV
-      Header1,Header2
-      Apple,100
-      Banana,200
-    CSV
-    @temp_file.write(@csv_content)
-    @temp_file.close # Close the file so YS1::CSV can read it
-  end
+  EXPECTED = [
+    { "Header1" => "Apple", "Header2" => "100" },
+    { "Header1" => "Banana", "Header2" => "200" }
+  ].freeze
 
-  def teardown
-    # Clean up the temporary file
-    @temp_file&.unlink
-  end
-
-  # Test initialization
   def test_initialization
-    csv_reader = YS1::CSV.new(@file_path)
-    assert_equal(@file_path, csv_reader.file_path)
+    with_tempfile(ROWS) do |path|
+      assert_equal(path, YS1::CSV.new(path).file_path)
+    end
   end
 
-  # rubocop:disable Metrics/AbcSize
-  # Test the read method
   def test_read
-    csv_reader = YS1::CSV.new(@file_path)
-    data = csv_reader.read
+    with_tempfile(ROWS) do |path|
+      data = YS1::CSV.new(path).read
 
-    # Verify it's an Array of Hashes
-    assert_instance_of(Array, data)
-    assert_equal(2, data.length)
-
-    # Verify content structure
-    assert_equal("Apple", data[0]["Header1"])
-    assert_equal("100", data[0]["Header2"])
-    assert_equal("Banana", data[1]["Header1"])
-    assert_equal("200", data[1]["Header2"])
+      assert_instance_of(Array, data)
+      assert_equal(EXPECTED, data)
+    end
   end
-  # rubocop:enable Metrics/AbcSize
 
-  # Test the to_json method (and dependency on read)
   def test_to_json
-    csv_reader = YS1::CSV.new(@file_path)
-    json_output = csv_reader.to_json
+    with_tempfile(ROWS) do |path|
+      parsed_data = JSON.parse(YS1::CSV.new(path).to_json)
 
-    # Parse the JSON back to verify structure
-    parsed_data = JSON.parse(json_output)
+      assert_instance_of(Array, parsed_data)
+      assert_equal(EXPECTED, parsed_data)
+    end
+  end
 
-    assert_instance_of(Array, parsed_data)
-    assert_equal(2, parsed_data.length)
+  def test_enumerable
+    with_tempfile(ROWS) do |path|
+      csv = YS1::CSV.new(path)
 
-    # Check content after JSON serialization/deserialization
-    assert_equal("Apple", parsed_data[0]["Header1"])
-    assert_equal("100", parsed_data[0]["Header2"])
+      assert_kind_of(Enumerator, csv.each)
+      assert_equal(2, csv.count)
+      assert_equal(%w[Apple Banana], csv.map { |row| row["Header1"] })
+    end
   end
 end

@@ -12,13 +12,13 @@ class TestYS1IPAggregator < Minitest::Test
   end
 
   def test_continuous
-    assert(YS1::IP::Aggregator.continuous?([1, 2, 3, 4]))
-    refute(YS1::IP::Aggregator.continuous?([1, 2, 4, 5]))
+    assert(YS1::IP::Aggregator.send(:continuous?, [1, 2, 3, 4]))
+    refute(YS1::IP::Aggregator.send(:continuous?, [1, 2, 4, 5]))
   end
 
   def test_aligned
-    assert(YS1::IP::Aggregator.aligned?(8, 4))
-    refute(YS1::IP::Aggregator.aligned?(7, 4))
+    assert(YS1::IP::Aggregator.send(:aligned?, 8, 4))
+    refute(YS1::IP::Aggregator.send(:aligned?, 7, 4))
   end
 
   def test_aggregate_single_ip

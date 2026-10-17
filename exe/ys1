@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "ys1"
+
+if ARGV.empty?
+  warn "Usage: ys1 PROMPT"
+  exit 1
+end
+
+YS1::Ollama.stream(ARGV.join(" ")) { |chunk| print chunk }

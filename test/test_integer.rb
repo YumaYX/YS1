@@ -3,21 +3,21 @@
 require_relative "helper"
 
 class TestYS1Integer < Minitest::Test
-  def test_invalid_prefix_negative
-    assert_raises(ArgumentError) do
-      YS1::IP.netmask(-1)
-    end
+  def test_ipv4mask24
+    assert_equal "255.255.255.0", 24.ipv4mask
   end
 
-  def test_invalid_prefix_too_large
-    assert_raises(ArgumentError) do
-      YS1::IP.netmask(33)
-    end
+  def test_ipv4mask32
+    assert_equal "255.255.255.255", 32.ipv4mask
   end
 
-  def test_invalid_prefix_not_integer
+  def test_ipv4mask0
+    assert_equal "0.0.0.0", 0.ipv4mask
+  end
+
+  def test_ipv4mask_out_of_range
     assert_raises(ArgumentError) do
-      YS1::IP.netmask("24")
+      33.ipv4mask
     end
   end
 end

@@ -6,13 +6,13 @@ require_relative "../ollama"
 module YS1
   # Ollama
   module Ollama
-    # Ollama OCR
-    extend YS1::Ollama
-
     # Handles image processing using Ollama for Optical Character Recognition (OCR).
     module OCR
       # The prompt used for requesting text extraction from the image.
       PROMPT = "Just answer with the text in the image."
+
+      # Default model options tuned for OCR.
+      DEFAULT_OPTIONS = { num_ctx: 8196, temperature: 0.1 }.freeze
 
       # Class methods for handling image encoding and initiating the OCR request.
       class << self
@@ -21,27 +21,31 @@ module YS1
         # @param path [String] The file path to the image.
         # @return [String] The Base64 encoded string of the image.
         def encode_image(path)
-          File.binread(path).then do |bin|
-            Base64.strict_encode64(bin)
-          end
+          Base64.strict_encode64(File.binread(path))
         end
 
-        # Reads an image file, encodes it, sets up the context, and calls the Ollama API
-        # to perform OCR.
+        # Reads an image file, encodes it, and calls the Ollama API to perform OCR.
+        #
+        # OCR-specific options are passed explicitly, so they never affect other
+        # Ollama calls.
         #
         # @param file_name [String] The file path to the image.
-        def from_file(file_name)
-          image_b64 = YS1::Ollama::OCR.encode_image(file_name)
-
-          YS1::Ollama.data.images = [image_b64]
-          YS1::Ollama.data.options.num_ctx = 8196
-          YS1::Ollama.data.options.temperature = 0.1
-          YS1::Ollama.request(YS1::Ollama::OCR::PROMPT)
+        # @param model [String] model name used for the request
+        # @param options [Hash] extra model options merged over the OCR defaults
+        # @return [String] extracted text
+        #
+        # @example
+        #   YS1::Ollama::OCR.from_file("scan.png")
+        #   # => "Invoice #123"
+        def from_file(file_name, model: YS1::Ollama::DEFAULT_MODEL, options: {})
+          YS1::Ollama.request(
+            PROMPT,
+            model: model,
+            options: DEFAULT_OPTIONS.merge(options),
+            images: [encode_image(file_name)]
+          )
         end
       end
     end
   end
 end
-
-# Executes the OCR process if the script is run directly, using the first command-line argument as the image path.
-puts YS1::Ollama::OCR.from_file(ARGV.first) if __FILE__ == $PROGRAM_NAME

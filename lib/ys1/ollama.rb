@@ -1,71 +1,77 @@
 # frozen_string_literal: true
 
-require "net/http"
-require "uri"
 require "json"
 
-require_relative "ollama/module"
-require_relative "dynamic_object"
+require_relative "ollama/request"
 
 module YS1
-  # Namespace for interacting with the Ollama API
+  # Namespace for interacting with the Ollama API.
+  #
+  # Every method is stateless: configuration such as the model name and model
+  # options is passed per call, so separate features (OCR, translation, plain
+  # requests) never contaminate each other.
   module Ollama
+    # Default model name used when none is given.
+    DEFAULT_MODEL = "gemma4"
+
+    # Ollama generate endpoint.
+    GENERATE_URL = "http://localhost:11434/api/generate"
+
+    # Ollama chat endpoint.
+    CHAT_URL = "http://localhost:11434/api/chat"
+
     class << self
-      # @return [DynamicObject] the data for requests
-      attr_accessor :data
-
-      # Sends a synchronous request to the Ollama generate endpoint
+      # Sends a synchronous request to the Ollama generate endpoint.
       #
       # @param prompt [String] the input prompt
+      # @param model [String] model name
+      # @param options [Hash] model options (e.g. `num_ctx`, `temperature`)
+      # @param extra [Hash] additional top-level payload fields (e.g. `images`)
       # @return [Net::HTTPResponse] raw HTTP response
-      def request_response(prompt)
-        url = URI.parse("http://localhost:11434/api/generate")
-        http = Net::HTTP.new(url.host, url.port)
-        http.open_timeout = nil
-        http.read_timeout = nil
+      #
+      # @example
+      #   response = YS1::Ollama.request_response("hi", model: "gemma4")
+      #   response.code # => "200"
+      def request_response(prompt, model: DEFAULT_MODEL, options: {}, **extra)
+        body = Request.generate_body(prompt, model: model, options: options, **extra)
 
-        request = Net::HTTP::Post.new(url.path, { "Content-Type" => "application/json" })
-
-        data = YS1::Ollama::Module.ollama_request_data(prompt, self.data)
-        request.body = data.to_json
-
-        http.request(request)
+        Request.post(GENERATE_URL, body)
       end
 
-      # Sends a request and extracts only the response text
+      # Sends a request and extracts only the response text.
       #
       # @param prompt [String] the input prompt
+      # @param model [String] model name
+      # @param options [Hash] model options (e.g. `num_ctx`, `temperature`)
+      # @param extra [Hash] additional top-level payload fields (e.g. `images`)
       # @return [String] generated response text
-      def request(prompt)
-        http_response = YS1::Ollama.request_response(prompt)
-        json = JSON.parse(http_response.body)
+      #
+      # @example
+      #   YS1::Ollama.request("hi", model: "gemma4")
+      #   # => "Hello! How can I help you today?"
+      def request(prompt, model: DEFAULT_MODEL, options: {}, **extra)
+        response = request_response(prompt, model: model, options: options, **extra)
 
-        json.fetch("response")
+        JSON.parse(response.body).fetch("response")
       end
 
-      # Streams a response from the Ollama chat endpoint
+      # Streams a response from the Ollama chat endpoint.
       #
       # @param prompt [String] the input prompt
+      # @param model [String] model name
+      # @param options [Hash] model options (e.g. `num_ctx`, `temperature`)
+      # @param extra [Hash] additional top-level payload fields
       # @yieldparam chunk [String] each streamed content chunk
       # @return [String] full accumulated response
-      def stream(prompt, &on_chunk)
-        url = URI.parse("http://localhost:11434/api/chat")
+      #
+      # @example
+      #   YS1::Ollama.stream("hi", model: "gemma4") { |chunk| print chunk }
+      #   # prints the response incrementally and returns the full text
+      def stream(prompt, model: DEFAULT_MODEL, options: {}, **extra, &on_chunk)
+        body = Request.chat_body(prompt, model: model, options: options, **extra)
 
-        http = YS1::Ollama::Module.build_http(url)
-        request = YS1::Ollama::Module.build_request(url, YS1::Ollama::Module.request_body(prompt, data))
-        YS1::Ollama::Module.execute(http, request, &on_chunk)
+        Request.stream(CHAT_URL, body, &on_chunk)
       end
     end
-
-    # Default data
-    self.data = Object.new
-    data.extend(YS1::DynamicObject)
-    data.model = "gemma4"
-
-    # Default data options
-    data.options = Object.new
-    data.options.extend(YS1::DynamicObject)
   end
 end
-
-YS1::Ollama.stream(ARGV.first) if __FILE__ == $PROGRAM_NAME

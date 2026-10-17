@@ -1,4 +1,150 @@
 module YS1
   VERSION: String
-  # See the writing guide of rbs: https://github.com/ruby/rbs#guides
+
+  # IP utilities.
+  module IP
+    def self.netmask: (Integer prefix) -> String
+
+    # An IP address and its network prefix in CIDR notation.
+    class Cidr
+      def initialize: (String addr, Integer prefix) -> void
+
+      def addr: () -> String
+
+      def prefix: () -> Integer
+
+      def to_s: () -> String
+    end
+
+    # Aggregates IPv4 addresses into CIDR blocks.
+    module Aggregator
+      def self.ip_to_u32: (String ip) -> Integer
+
+      def self.u32_to_ip: (Integer number) -> String
+
+      def self.aggregate_ips: (Array[String] ip_list) -> Array[Cidr]
+
+      def self.cidrs_to_acl: (Array[Cidr] raw) -> Array[String]
+    end
+  end
+
+  # Cartesian product utilities.
+  module Join
+    def self.cross: (*Array[untyped])
+                  -> Enumerator[Array[untyped]]
+                  | (*Array[untyped]) { (Array[untyped]) -> void } -> void
+
+    def self.cross_from_files: (*String)
+                             -> Enumerator[Array[String]]
+                             | (*String) { (Array[String]) -> void } -> void
+  end
+
+  # Utilities for fenced (``` style) code blocks.
+  module CodeBlock
+    def self.strip_code_block: (String str) -> String
+
+    def self.to_arr_from: (String text) -> Array[String]
+
+    def self.body: (String? block) -> String?
+  end
+
+  # Reads a CSV file and converts it into structured formats.
+  class CSV
+    include Enumerable[Hash[String, String]]
+
+    attr_reader file_path: String
+    attr_reader data: Array[Hash[String, String]]?
+
+    def initialize: (String file_path) -> void
+
+    def read: () -> Array[Hash[String, String]]
+
+    def each: () -> Enumerator[Hash[String, String], self]
+            | () { (Hash[String, String]) -> void } -> self
+
+    def to_json: (*untyped) -> String
+  end
+
+  # Dynamic attribute accessor backed by a Hash.
+  module Accessor
+    def data: () -> Hash[Symbol, untyped]
+
+    def method_missing: (Symbol name, *untyped args) -> untyped
+
+    def respond_to_missing?: (Symbol name, ?bool include_private) -> bool
+  end
+
+  # A parent object with its children.
+  class ParentAndChild
+    attr_reader parent: untyped
+    attr_accessor children: Array[untyped]
+
+    def initialize: (untyped parent) -> void
+
+    def add_child: (*untyped child) -> void
+
+    def family: () -> Array[untyped]
+  end
+
+  # File path utilities.
+  module Path
+    def self.file_list: (*untyped objs) -> Array[String]
+  end
+
+  # Namespace for interacting with the Ollama API.
+  module Ollama
+    DEFAULT_MODEL: String
+    GENERATE_URL: String
+    CHAT_URL: String
+
+    def self.request_response: (String prompt, ?model: String, ?options: Hash[Symbol, untyped], **untyped) -> untyped
+
+    def self.request: (String prompt, ?model: String, ?options: Hash[Symbol, untyped], **untyped) -> String
+
+    def self.stream: (String prompt, ?model: String, ?options: Hash[Symbol, untyped], **untyped) { (String) -> void } -> String
+
+    # Low-level request builder/executor.
+    module Request
+      def self.generate_body: (String prompt, model: String, ?options: Hash[Symbol, untyped], **untyped) -> Hash[String, untyped]
+
+      def self.chat_body: (String prompt, model: String, ?options: Hash[Symbol, untyped], **untyped) -> Hash[String, untyped]
+
+      def self.post: (untyped url, Hash[String, untyped] body) -> untyped
+
+      def self.stream: (untyped url, Hash[String, untyped] body) { (String) -> void } -> String
+    end
+
+    # OCR helper.
+    module OCR
+      PROMPT: String
+      DEFAULT_OPTIONS: Hash[Symbol, untyped]
+
+      def self.encode_image: (String path) -> String
+
+      def self.from_file: (String file_name, ?model: String, ?options: Hash[Symbol, untyped]) -> String
+    end
+
+    # Translation helper.
+    module Trans
+      DEFAULT_OPTIONS: Hash[Symbol, untyped]
+
+      def self.prompt_template: (Symbol lang, String text) -> String
+
+      def self.into: (Symbol lang, String text, ?model: String, ?options: Hash[Symbol, untyped]) { (String) -> void } -> String
+    end
+  end
+end
+
+# Core extensions.
+
+class Integer
+  def ipv4mask: () -> String
+end
+
+class Hash[unchecked out K, unchecked out V]
+  def to_anon_class: () -> Class
+end
+
+class String
+  def to_pacs: (Regexp start_line) -> Array[YS1::ParentAndChild]
 end

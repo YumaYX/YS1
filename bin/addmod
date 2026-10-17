@@ -1,35 +1,52 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# LIB FILE
+# Scaffolds a new YS1 module and its test file.
+#
+# Usage:
+#   bin/addmod <name>
+#
+# Example:
+#   bin/addmod ip
+#   # creates lib/ys1/ip.rb (YS1::Ip) and test/test_ip.rb (TestYS1Ip)
+
+name = ARGV.first
+if name.nil? || name.empty?
+  warn "Usage: bin/addmod <name>"
+  exit 1
+end
+
+snake = name.gsub(/([a-z\d])([A-Z])/, '\1_\2').downcase
+camel = snake.split("_").map(&:capitalize).join
+root  = File.expand_path("..", __dir__)
+
 mod_file = <<~LIBEOL
   # frozen_string_literal: true
 
   module YS1
-    # t
-    module T
+    # #{camel}
+    module #{camel}
       class << self; end
     end
   end
 LIBEOL
 
-mod_file_path = "#{__dir__}/../lib/ys1/t.rb"
+mod_file_path = File.join(root, "lib", "ys1", "#{snake}.rb")
 File.write(mod_file_path, mod_file) unless File.exist?(mod_file_path)
 
-# TEST FILE
 test_file = <<~TESTEOL
   # frozen_string_literal: true
 
   require_relative "helper"
 
-  class TestYS1T < Minitest::Test
-    def setup; end
-    def teardown; end
-    def test_t
-      assert(false)
+  class TestYS1#{camel} < Minitest::Test
+    def test_#{snake}
+      refute_nil YS1::#{camel}
     end
   end
 TESTEOL
 
-test_file_path = "#{__dir__}/../test/test_t.rb"
+test_file_path = File.join(root, "test", "test_#{snake}.rb")
 File.write(test_file_path, test_file) unless File.exist?(test_file_path)
+
+puts "created lib/ys1/#{snake}.rb and test/test_#{snake}.rb"

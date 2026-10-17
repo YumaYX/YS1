@@ -2,17 +2,13 @@
 
 require_relative "helper"
 
-class TestYS1DynamicObject < Minitest::Test
+class TestYS1Accessor < Minitest::Test
   class User
-    include YS1::DynamicObject
+    include YS1::Accessor
   end
 
   def setup
     @user = User.new
-  end
-
-  def teardown
-    @user = nil
   end
 
   def test_dynamic_setter_and_getter
@@ -44,6 +40,10 @@ class TestYS1DynamicObject < Minitest::Test
 
   def test_respond_to_for_unknown_attribute
     refute_respond_to(@user, :unknown)
+  end
+
+  def test_respond_to_setter_before_assignment
+    assert_respond_to(@user, :name=)
   end
 
   def test_unknown_getter_raises_error

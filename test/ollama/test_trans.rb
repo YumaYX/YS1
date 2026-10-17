@@ -10,11 +10,12 @@ class TestYS1OllamaTrans < Minitest::Test
   end
 
   def test_trans_into_ja
-    YS1::Ollama.data.model = TEST_OLLAMA_MODEL
-    YS1::Ollama.data.options.num_ctx = 128
-    YS1::Ollama.data.options.think = false
-
-    en = YS1::Ollama::Trans.into(:English, "こんにちは")
+    en = YS1::Ollama::Trans.into(
+      :English,
+      "こんにちは",
+      model: TEST_OLLAMA_MODEL,
+      options: { num_ctx: 128, think: false }
+    )
     assert_match(/hi|hello/, en.downcase)
   end
 end
