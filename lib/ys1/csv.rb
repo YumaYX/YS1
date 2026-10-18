@@ -9,7 +9,7 @@ module YS1
   # and convert it into structured formats like an array of hashes (via #read)
   # or JSON (via #to_json).
   #
-  # It also includes {Enumerable} over the rows, so iteration helpers such as
+  # It also includes `Enumerable` over the rows, so iteration helpers such as
   # `map`, `select`, `each_with_index`, and `to_a` work directly on the object.
   class CSV
     include Enumerable

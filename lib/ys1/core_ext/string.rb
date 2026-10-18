@@ -20,9 +20,9 @@ class String
   #   DATA
   #
   #   parents = content.to_pacs(/^Parent/)
-  #   parents.each do |parent|
-  #     puts parent.line
-  #     parent.children.each { |child| puts "  #{child}" }
+  #   parents.each do |pac|
+  #     puts pac.parent
+  #     pac.children.each { |child| puts "  #{child}" }
   #   end
   #
   # @note For very large data, consider splitting the file using the `csplit` command
