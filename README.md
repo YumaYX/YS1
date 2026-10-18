@@ -117,12 +117,11 @@ YS1::Path.read_lines("ips.txt").first          #=> "10.0.0.1"
 # Hierarchical tree rendering
 YS1::ParentAndChild.new("root").to_tree
 
-# Aligned tables, humanized values, diffs and reports
+# Aligned tables, humanized values, and reports
 puts YS1::Table.format([{ "name" => "Taro", "age" => 20 }])
 YS1::Humanize.bytes(1536)            #=> "1.5 KiB"
 YS1::Humanize.duration(3661)         #=> "1h 1m 1s"
 YS1::Humanize.number(1_234_567)      #=> "1,234,567"
-YS1::Diff.unified("a\nb\nc", "a\nx\nc")
 YS1::Report.save({ "count" => 3 }, "stats.dat")   #=> "stats.dat"
 YS1::Report.load("stats.dat")                     #=> {"count" => 3}
 ```

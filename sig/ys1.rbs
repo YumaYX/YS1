@@ -135,13 +135,6 @@ module YS1
     def self.number: (Numeric number) -> String
   end
 
-  # Minimal line-based diff.
-  module Diff
-    def self.lines: (String | Array[String] old, String | Array[String] new) -> Array[[String, String]]
-
-    def self.unified: (String | Array[String] old, String | Array[String] new, ?from: String, ?to: String) -> String
-  end
-
   # Marshal-based object serialization.
   module Report
     DEFAULT_FILE: String
