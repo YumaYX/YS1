@@ -1,33 +1,11 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require "optparse"
 require "ys1"
 
-options = { model: YS1::Ollama::DEFAULT_MODEL }
-
-parser = OptionParser.new do |opts|
-  opts.banner = "Usage: ys1-trans [options] LANGUAGE [TEXT]"
-  opts.separator ""
-  opts.separator "Translates TEXT into LANGUAGE using a local Ollama server."
-  opts.separator "Reads the text from stdin when TEXT is omitted."
-  opts.separator ""
-  opts.on("-m", "--model MODEL", "Ollama model name (default: #{options[:model]})") { |v| options[:model] = v }
-  opts.on("-h", "--help", "Show this help") do
-    puts opts
-    exit
-  end
-end
-
-parser.parse!(ARGV)
-language = ARGV.shift
-text = ARGV.join(" ")
-text = $stdin.read if text.empty?
-
-if language.nil? || language.empty? || text.strip.empty?
-  warn parser.help
+unless ARGV.size == 2
+  warn "Usage: ys1-trans LANGUAGE TEXT"
   exit 1
 end
 
-YS1::Ollama::Trans.into(language, text, model: options[:model]) { |chunk| print chunk }
-puts
+YS1::Ollama::Trans.into(ARGV[0], ARGV[1]) { |chunk| print chunk }

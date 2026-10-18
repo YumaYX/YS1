@@ -159,13 +159,11 @@ affect each other. `YS1::Ollama::DEFAULT_MODEL` is used when `model:` is omitted
 The command-line entry points are installed as executables:
 
 ```sh
-ys1 "Tell me one fun fact about Ruby."   # stream (use -f json for JSON, -m MODEL)
-ys1-ocr scan.png                        # OCR an image (-m MODEL)
-ys1-trans English "こんにちは"            # translate text (stdin when TEXT omitted)
+ys1 "Tell me one fun fact about Ruby."   # stream a response
+ys1-ocr scan.png                         # OCR an image
+ys1-trans English "こんにちは"            # translate text
 ys1-agg ips.txt                          # aggregate IPv4 addresses into ACL rules
 ```
-
-Every command supports `-h`/`--help` for its full list of options.
 
 ## Contributing
 
