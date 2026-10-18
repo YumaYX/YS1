@@ -82,17 +82,40 @@ module YS1
 
         # Performs a streaming request, yielding each content chunk.
         #
+        # Chunks are buffered until a complete line arrives; each line is a
+        # JSON object containing either a content fragment or the final
+        # +done+ flag.
+        #
         # @param http [Net::HTTP] configured HTTP client
         # @param request [Net::HTTP::Post] HTTP request
         # @yieldparam content [String] streamed response content
         # @return [String] accumulated full response
-        def execute(http, request, &on_chunk)
+        # @raise [RuntimeError] when the HTTP status or a JSON line is invalid
+        def execute(http, request)
           full = +""
           buffer = +""
+
           http.request(request) do |res|
             validate!(res)
-            res.read_body { |chunk| process_chunk(chunk, buffer, full, &on_chunk) }
+            res.read_body do |chunk|
+              buffer << chunk
+              while (line = buffer.slice!(/.*\n/))
+                next if line.strip.empty?
+
+                json = parse_json(line)
+                raise "Ollama Error: #{json["error"]}" if json["error"]
+
+                content = json.dig("message", "content")
+                if content
+                  full << content
+                  yield content if block_given?
+                end
+
+                break if json["done"] == true
+              end
+            end
           end
+
           full
         end
 
@@ -136,47 +159,6 @@ module YS1
           ).tap do |req|
             req.body = body.to_json
           end
-        end
-
-        # Processes streamed chunks line by line.
-        #
-        # @param chunk [String, nil] streamed chunk
-        # @param buffer [String] streaming buffer
-        # @param full_response [String] accumulated response
-        # @yieldparam content [String] streamed content
-        # @return [void]
-        def process_chunk(chunk, buffer, full_response, &on_chunk)
-          return unless chunk
-
-          buffer << chunk
-
-          while (line = buffer.slice!(/.*\n/))
-            next if line.strip.empty?
-
-            done = process_line?(line, full_response, &on_chunk)
-            break if done
-          end
-        end
-
-        # Processes a single streamed JSON line.
-        #
-        # @param line [String] JSON response line
-        # @param full_response [String] accumulated response
-        # @yieldparam content [String] streamed content
-        # @return [Boolean] whether streaming is complete
-        # @raise [RuntimeError] when Ollama returns an error
-        def process_line?(line, full_response)
-          json = parse_json(line)
-
-          raise "Ollama Error: #{json["error"]}" if json["error"]
-
-          content = json.dig("message", "content")
-          if content
-            full_response << content
-            yield content if block_given?
-          end
-
-          json["done"] == true
         end
 
         # Parses a JSON response line safely.
