@@ -49,6 +49,8 @@ module YS1
 
   # Utilities for fenced (``` style) code blocks.
   module CodeBlock
+    BLOCK_PATTERN: Regexp
+
     def self.strip: (String str) -> String
 
     def self.blocks: (String text) -> Array[String]

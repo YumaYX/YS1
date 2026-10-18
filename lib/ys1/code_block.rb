@@ -4,6 +4,10 @@ module YS1
   # Provides utility methods for extracting and processing
   # fenced code blocks (``` style) from a given text.
   module CodeBlock
+    # Matches one fenced code block, including the opening and closing
+    # fences. Shared by {.blocks} and {.strip_all}.
+    BLOCK_PATTERN = /^```[^\n]*\n(?:[^\n]*\n)*?^```[ \t]*(?:\n|\z)/m
+
     class << self
       # Removes surrounding Markdown-style code block fences from a string.
       #
@@ -39,7 +43,7 @@ module YS1
       # @return [Array<String>] an array of full code block strings,
       #   including the opening and closing backticks
       def blocks(text)
-        text.scan(/^```[^\n]*\n(?:[^\n]*\n)*?^```[ \t]*(?:\n|\z)/m)
+        text.scan(BLOCK_PATTERN)
       end
 
       # Extracts the language tag of every fenced code block in the text.
@@ -75,7 +79,7 @@ module YS1
       #   YS1::CodeBlock.strip_all("before\n```ruby\nx\n```\nafter")
       #   # => "before\nx\nafter"
       def strip_all(text)
-        text.gsub(/^```[^\n]*\n(?:[^\n]*\n)*?^```[ \t]*(?:\n|\z)/m) do |block|
+        text.gsub(BLOCK_PATTERN) do |block|
           body(block)
         end
       end
