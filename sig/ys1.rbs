@@ -3,7 +3,15 @@ module YS1
 
   # IP utilities.
   module IP
+    PRIVATE_RANGES: Array[IPAddr]
+
     def self.netmask: (Integer prefix) -> String
+
+    def self.include?: (String | Cidr range, String ip) -> bool
+
+    def self.private?: (String ip) -> bool
+
+    def self.version: (String ip) -> Integer
 
     # An IP address and its network prefix in CIDR notation.
     class Cidr
@@ -18,42 +26,52 @@ module YS1
 
     # Aggregates IPv4 addresses into CIDR blocks.
     module Aggregator
-      def self.ip_to_u32: (String ip) -> Integer
+      def self.to_u32: (String ip) -> Integer
 
-      def self.u32_to_ip: (Integer number) -> String
+      def self.from_u32: (Integer number) -> String
 
-      def self.aggregate_ips: (Array[String] ip_list) -> Array[Cidr]
+      def self.aggregate: (Array[String] ip_list) -> Array[Cidr]
 
-      def self.cidrs_to_acl: (Array[Cidr] raw) -> Array[String]
+      def self.to_acl: (Array[Cidr] raw) -> Array[String]
     end
   end
 
   # Cartesian product utilities.
   module Join
-    def self.cross: (*Array[untyped])
+    def self.cross: (*Array[untyped], ?limit: Integer?)
                   -> Enumerator[Array[untyped]]
-                  | (*Array[untyped]) { (Array[untyped]) -> void } -> void
+                  | (*Array[untyped], ?limit: Integer?) { (Array[untyped]) -> void } -> void
 
-    def self.cross_from_files: (*String)
+    def self.cross_from_files: (*String, ?limit: Integer?)
                              -> Enumerator[Array[String]]
-                             | (*String) { (Array[String]) -> void } -> void
+                             | (*String, ?limit: Integer?) { (Array[String]) -> void } -> void
   end
 
   # Utilities for fenced (``` style) code blocks.
   module CodeBlock
-    def self.strip_code_block: (String str) -> String
+    def self.strip: (String str) -> String
 
-    def self.to_arr_from: (String text) -> Array[String]
+    def self.blocks: (String text) -> Array[String]
+
+    def self.languages: (String text) -> Array[String]
+
+    def self.bodies: (String text) -> Array[String]
+
+    def self.strip_all: (String text) -> String
+
+    def self.language: (String block) -> String
 
     def self.body: (String? block) -> String?
   end
 
   # Reads a CSV file and converts it into structured formats.
   class CSV
-    include Enumerable[Hash[String, String]]
+    include Enumerable[Hash[String, untyped]]
+
+    def self.write: (String file_path, Array[Hash[untyped, untyped] | Array[untyped]] rows, ?headers: Array[String]?) -> void
 
     attr_reader file_path: String
-    attr_reader data: Array[Hash[String, String]]?
+    attr_reader data: Array[Hash[String, untyped]]?
 
     def initialize: (String file_path) -> void
 
@@ -63,6 +81,12 @@ module YS1
             | () { (Hash[String, String]) -> void } -> self
 
     def to_json: (*untyped) -> String
+
+    def select_columns: (*String | Symbol names) -> Array[Hash[String, untyped]]
+
+    def cast: (Hash[String | Symbol, ^(untyped) -> untyped] mapping) -> self
+
+    def to_table: () -> String
   end
 
   # Dynamic attribute accessor backed by a Hash.
@@ -84,11 +108,47 @@ module YS1
     def add_child: (*untyped child) -> void
 
     def family: () -> Array[untyped]
+
+    def to_tree: (?indent: String) -> String
   end
 
   # File path utilities.
   module Path
     def self.file_list: (*untyped objs) -> Array[String]
+
+    def self.read_lines: (*untyped objs, ?chomp: bool) -> Array[String]
+  end
+
+  # Aligned plain-text table rendering.
+  module Table
+    def self.format: (Array[untyped] rows, ?headers: Array[String]?) -> String
+  end
+
+  # Converts raw numeric values into human-readable strings.
+  module Humanize
+    BYTE_UNITS: Array[String]
+
+    def self.bytes: (Numeric bytes) -> String
+
+    def self.duration: (Numeric seconds) -> String
+
+    def self.number: (Numeric number) -> String
+  end
+
+  # Minimal line-based diff.
+  module Diff
+    def self.lines: (String | Array[String] old, String | Array[String] new) -> Array[[String, String]]
+
+    def self.unified: (String | Array[String] old, String | Array[String] new, ?from: String, ?to: String) -> String
+  end
+
+  # Marshal-based object serialization.
+  module Report
+    DEFAULT_FILE: String
+
+    def self.save: (untyped object, ?String output_name) -> String
+
+    def self.load: (?String input_name) -> untyped
   end
 
   # Namespace for interacting with the Ollama API.
@@ -97,7 +157,7 @@ module YS1
     GENERATE_URL: String
     CHAT_URL: String
 
-    def self.request_response: (String prompt, ?model: String, ?options: Hash[Symbol, untyped], **untyped) -> untyped
+    def self.response: (String prompt, ?model: String, ?options: Hash[Symbol, untyped], **untyped) -> untyped
 
     def self.request: (String prompt, ?model: String, ?options: Hash[Symbol, untyped], **untyped) -> String
 
@@ -131,6 +191,15 @@ module YS1
       def self.prompt_template: (Symbol lang, String text) -> String
 
       def self.into: (Symbol lang, String text, ?model: String, ?options: Hash[Symbol, untyped]) { (String) -> void } -> String
+    end
+
+    # Structured JSON extraction helper.
+    module Extract
+      DEFAULT_OPTIONS: Hash[Symbol, untyped]
+
+      def self.prompt_template: (String hint, String text) -> String
+
+      def self.from_text: (String hint, String text, ?model: String, ?options: Hash[Symbol, untyped]) -> untyped
     end
   end
 end

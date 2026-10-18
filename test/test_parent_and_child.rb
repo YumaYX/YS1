@@ -31,4 +31,27 @@ class TestYS1ParentAndChild < Minitest::Test
     3.times { |index| @pac.add_child(index) }
     assert_equal(["Parent", 0, 1, 2], @pac.family)
   end
+
+  def test_to_tree
+    @pac.add_child("Child A", "Child B")
+    expected = "Parent\n  Child A\n  Child B"
+
+    assert_equal(expected, @pac.to_tree)
+  end
+
+  def test_to_tree_custom_indent
+    @pac.add_child("Child")
+    expected = "Parent\n\tChild"
+
+    assert_equal(expected, @pac.to_tree(indent: "\t"))
+  end
+
+  def test_to_tree_nested
+    child = YS1::ParentAndChild.new("Child")
+    child.add_child("Grandchild")
+    @pac.add_child(child)
+    expected = "Parent\n  Child\n    Grandchild"
+
+    assert_equal(expected, @pac.to_tree)
+  end
 end

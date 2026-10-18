@@ -12,6 +12,10 @@ class TestYS1 < Minitest::Test
     assert_kind_of Module, YS1::Join
     assert_kind_of Module, YS1::CodeBlock
     assert_kind_of Module, YS1::Path
+    assert_kind_of Module, YS1::Table
+    assert_kind_of Module, YS1::Humanize
+    assert_kind_of Module, YS1::Diff
+    assert_kind_of Module, YS1::Report
     assert_kind_of Module, YS1::Ollama
   end
 end

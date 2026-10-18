@@ -68,6 +68,22 @@ after the RuboCop workflow completes.
 - Namespace everything under `YS1` (e.g. `YS1::IP::Aggregator`).
 - Core extensions live in `lib/ys1/core_ext/` and reopen the stdlib class directly.
 
+### Naming Conventions
+
+- **Modules**: PascalCase noun (e.g. `YS1::Table`, `YS1::Humanize`).
+- **Actions**: snake_case verb (e.g. `YS1::IP::Aggregator.aggregate`).
+- **Collections**: plural noun for methods returning collections
+  (e.g. `YS1::CodeBlock.blocks`, `YS1::CodeBlock.bodies`).
+- **Conversions**: use `to_*` for conversions to another representation
+  (e.g. `YS1::CSV#to_table`, `YS1::Aggregator.to_acl`, `YS1::Aggregator.to_u32`)
+  and `from_*` for conversions from one form to another
+  (e.g. `YS1::Aggregator.from_u32`).
+- **Predicates**: end with `?` (e.g. `YS1::IP.private?`, `YS1::IP.include?`).
+- **Tunable values**: `DEFAULT_*` constants (e.g. `YS1::Ollama::DEFAULT_MODEL`).
+- **Options**: pass via keyword arguments (e.g. `limit: 3`, `headers: %w[n x]`).
+
+- Keep breaking renames consistent across lib, test, exe, sig and CLI examples.
+
 ### Documentation (YARD)
 
 - Every public class, module, and method must have YARD comments.

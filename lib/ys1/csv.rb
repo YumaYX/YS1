@@ -14,6 +14,61 @@ module YS1
   class CSV
     include Enumerable
 
+    class << self
+      # Writes rows to a CSV file.
+      #
+      # @param file_path [String] destination file path
+      # @param rows [Array<Hash>, Array<Array>] rows to write
+      # @param headers [Array<String>, nil] header order; defaults to the
+      #   keys of the first hash (or none for arrays)
+      # @return [void]
+      #
+      # @example Array of hashes
+      #   YS1::CSV.write("out.csv", [{ "id" => "1", "name" => "Alice" }])
+      #
+      # @example Array of arrays
+      #   YS1::CSV.write("out.csv", [%w[1 Alice]], headers: %w[id name])
+      def write(file_path, rows, headers: nil)
+        return if rows.empty? && headers.nil?
+
+        ::CSV.open(file_path, "w") do |csv|
+          if rows.first.is_a?(Hash)
+            write_hashes(csv, rows, headers)
+          else
+            write_arrays(csv, rows, headers)
+          end
+        end
+
+        nil
+      end
+
+      private
+
+      # Writes an array of hashes, using the given headers or the first
+      # hash's keys.
+      #
+      # @param csv [::CSV] open CSV writer
+      # @param rows [Array<Hash>] rows to write
+      # @param headers [Array<String>, nil] column order
+      # @return [void]
+      def write_hashes(csv, rows, headers)
+        keys = (headers || rows.first.keys).map(&:to_s)
+        csv << keys
+        rows.each { |row| csv << keys.map { |key| row[key] } }
+      end
+
+      # Writes an array of arrays, optionally preceded by a header row.
+      #
+      # @param csv [::CSV] open CSV writer
+      # @param rows [Array<Array>] rows to write
+      # @param headers [Array<String>, nil] header row
+      # @return [void]
+      def write_arrays(csv, rows, headers)
+        csv << headers if headers
+        rows.each { |row| csv << row }
+      end
+    end
+
     # @return [String] The path to the CSV file.
     attr_reader :file_path
     # @return [Array<Hash>, nil] The loaded CSV data.
@@ -59,6 +114,57 @@ module YS1
     # @return [String] A JSON formatted string of the CSV data.
     def to_json(*_args)
       JSON.generate(@data || read)
+    end
+
+    # Returns rows restricted to the given columns.
+    #
+    # @param names [Array<String>] the column names to keep
+    # @return [Array<Hash>] rows containing only the selected columns
+    #
+    # @example
+    #   csv = YS1::CSV.new("data.csv")
+    #   csv.select_columns("id", "name")
+    #   # => [{ "id" => "1", "name" => "Alice" }, ...]
+    def select_columns(*names)
+      keys = names.flatten.map(&:to_s)
+
+      (@data || read).map { |row| row.slice(*keys) }
+    end
+
+    # Casts column values using the given converters.
+    #
+    # Unknown columns are ignored. Values are passed through the converter
+    # proc, which may raise (e.g. `Integer()` on a non-numeric value).
+    #
+    # @param mapping [Hash{String, Symbol => #call}] column name to converter
+    # @return [self]
+    #
+    # @example
+    #   csv = YS1::CSV.new("data.csv")
+    #   csv.cast("id" => ->(v) { Integer(v) })
+    #   csv.map { |row| row["id"] }
+    #   # => [1, 2, 3]
+    def cast(mapping)
+      @data ||= read
+      @data.each do |row|
+        mapping.each do |column, converter|
+          key = column.to_s
+          row[key] = converter.call(row[key]) if row.key?(key)
+        end
+      end
+      self
+    end
+
+    # Renders the rows as an aligned text table.
+    #
+    # @return [String] the table produced by {YS1::Table.format}
+    #
+    # @example
+    #   puts YS1::CSV.new("data.csv").to_table
+    def to_table
+      require_relative "table"
+
+      YS1::Table.format(@data || read)
     end
   end
 end

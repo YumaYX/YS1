@@ -42,4 +42,23 @@ class TestYS1Path < Minitest::Test
     result = YS1::Path.file_list
     assert_equal([], result)
   end
+
+  def test_read_lines
+    File.write("lines.txt", "one\ntwo\nthree\n")
+
+    assert_equal(%w[one two three], YS1::Path.read_lines("lines.txt"))
+  end
+
+  def test_read_lines_chomp_false
+    File.write("lines.txt", "one\ntwo\n")
+
+    assert_equal(%W[one\n two\n], YS1::Path.read_lines("lines.txt", chomp: false))
+  end
+
+  def test_read_lines_glob
+    File.write("l1.txt", "a\n")
+    File.write("l2.txt", "b\n")
+
+    assert_equal(%w[a b], YS1::Path.read_lines("l*.txt"))
+  end
 end

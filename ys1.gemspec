@@ -9,7 +9,11 @@ Gem::Specification.new do |spec|
   spec.email = ["86939129+YumaYX@users.noreply.github.com"]
 
   spec.summary = "My Essential"
-  spec.description = "YS1 is an indispensable toolkit and concept designed to be both convenient and useful, which I won’t want to forget. This toolkit is particularly valuable for basic information processing. It improves efficiency and accuracy in handling and managing information across a range of tasks."
+  spec.description = "YS1 is an indispensable toolkit and concept designed to be both " \
+                     "convenient and useful, which I won’t want to forget. This toolkit " \
+                     "is particularly valuable for basic information processing. It " \
+                     "improves efficiency and accuracy in handling and managing " \
+                     "information across a range of tasks."
   spec.homepage = "https://github.com/YumaYX/YS1"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.0"

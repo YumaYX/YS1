@@ -47,4 +47,74 @@ class TestYS1CSV < Minitest::Test
       assert_equal(%w[Apple Banana], csv.map { |row| row["Header1"] })
     end
   end
+
+  def test_write_hashes
+    rows = [{ "id" => "1", "name" => "Alice" }, { "id" => "2", "name" => "Bob" }]
+    file = Tempfile.new("out")
+    begin
+      YS1::CSV.write(file.path, rows)
+
+      assert_equal(rows, YS1::CSV.new(file.path).read)
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
+  def test_write_arrays_with_headers
+    file = Tempfile.new("out")
+    begin
+      YS1::CSV.write(file.path, [%w[1 Alice]], headers: %w[id name])
+
+      assert_equal([{ "id" => "1", "name" => "Alice" }], YS1::CSV.new(file.path).read)
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
+  def test_write_empty_noop
+    file = Tempfile.new("out")
+    begin
+      assert_nil YS1::CSV.write(file.path, [])
+    ensure
+      file.close
+      file.unlink
+    end
+  end
+
+  def test_select_columns
+    with_tempfile(ROWS) do |path|
+      selected = YS1::CSV.new(path).select_columns("Header1")
+
+      assert_equal([{ "Header1" => "Apple" }, { "Header1" => "Banana" }], selected)
+    end
+  end
+
+  def test_cast
+    with_tempfile(ROWS) do |path|
+      csv = YS1::CSV.new(path)
+      csv.cast("Header2" => ->(v) { Integer(v) })
+
+      assert_equal([100, 200], csv.map { |row| row["Header2"] })
+    end
+  end
+
+  def test_to_table
+    with_tempfile(ROWS) do |path|
+      table = YS1::CSV.new(path).to_table
+
+      assert_includes(table, "Header1")
+      assert_includes(table, "Apple")
+    end
+  end
+
+  def test_to_table_has_separator
+    with_tempfile(ROWS) do |path|
+      lines = YS1::CSV.new(path).to_table.split("\n")
+
+      assert_equal("Header1 | Header2", lines[0].rstrip)
+      assert_match(/\A-+\+-+\z/, lines[1])
+    end
+  end
 end

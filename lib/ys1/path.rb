@@ -23,6 +23,23 @@ module YS1
       def file_list(*objs)
         objs.flatten.flat_map { |obj| Dir.glob(obj.to_s) }
       end
+
+      # Expands glob patterns and concatenates the lines of every matched file.
+      #
+      # @param objs [Array<String, Array>] paths, glob patterns, or nested arrays
+      # @param chomp [Boolean] remove trailing newlines when true
+      # @return [Array<String>] lines from all matched files (in glob order)
+      #
+      # @example
+      #   YS1::Path.read_lines("data/*.txt")
+      #   # => ["first line", "second line", ...]
+      #
+      # @example Keeping newlines
+      #   YS1::Path.read_lines("a.txt", chomp: false)
+      #   # => ["line one\n", "line two\n"]
+      def read_lines(*objs, chomp: true)
+        file_list(*objs).flat_map { |path| File.readlines(path, chomp: chomp) }
+      end
     end
   end
 end

@@ -1,11 +1,29 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require "optparse"
 require "ys1"
 
-if ARGV.empty?
-  warn "Usage: ys1-ocr IMAGE_PATH"
+options = { model: YS1::Ollama::DEFAULT_MODEL }
+
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: ys1-ocr [options] IMAGE_PATH"
+  opts.separator ""
+  opts.separator "Extracts text from an image using a local Ollama server."
+  opts.separator ""
+  opts.on("-m", "--model MODEL", "Ollama model name (default: #{options[:model]})") { |v| options[:model] = v }
+  opts.on("-h", "--help", "Show this help") do
+    puts opts
+    exit
+  end
+end
+
+parser.parse!(ARGV)
+image_path = ARGV.first
+
+if image_path.nil? || image_path.empty?
+  warn parser.help
   exit 1
 end
 
-puts YS1::Ollama::OCR.from_file(ARGV.first)
+puts YS1::Ollama::OCR.from_file(image_path, model: options[:model])

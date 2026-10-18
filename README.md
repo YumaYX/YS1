@@ -85,6 +85,48 @@ ruby_info.to_anon_class.new
 - `gem install`: `ruby -rys1 -e 'p YS1::VERSION'`
 - `bundle install`: `bundle exec ruby -rys1 -e 'p YS1::VERSION'`
 
+### Modules
+
+```ruby
+require "ys1"
+
+# IP helpers
+YS1::IP.include?("10.0.0.0/8", "10.1.2.3")   #=> true
+YS1::IP.private?("192.168.1.1")             #=> true
+YS1::IP.version("2001:db8::1")              #=> 6
+
+# CSV reading and writing
+csv = YS1::CSV.new("users.csv")
+csv.select_columns("name", "email")
+csv.cast("age" => :to_i)
+puts csv.to_table
+YS1::CSV.write("out.csv", [{ "name" => "Taro", "age" => 20 }])
+
+# Fenced code blocks
+YS1::CodeBlock.languages("```rb\nputs 1\n```\n```sh\nls\n```")
+#=> ["rb", "sh"]
+YS1::CodeBlock.strip_all("text\n```rb\nputs 1\n```")
+
+# Cartesian product with an optional limit
+YS1::Join.cross([1, 2], %w[a b], limit: 3).to_a
+#=> [[1, "a"], [1, "b"], [2, "a"]]
+
+# File helpers
+YS1::Path.read_lines("ips.txt").first          #=> "10.0.0.1"
+
+# Hierarchical tree rendering
+YS1::ParentAndChild.new("root").to_tree
+
+# Aligned tables, humanized values, diffs and reports
+puts YS1::Table.format([{ "name" => "Taro", "age" => 20 }])
+YS1::Humanize.bytes(1536)            #=> "1.5 KiB"
+YS1::Humanize.duration(3661)         #=> "1h 1m 1s"
+YS1::Humanize.number(1_234_567)      #=> "1,234,567"
+YS1::Diff.unified("a\nb\nc", "a\nx\nc")
+YS1::Report.save({ "count" => 3 }, "stats.dat")   #=> "stats.dat"
+YS1::Report.load("stats.dat")                     #=> {"count" => 3}
+```
+
 ### Ollama
 
 Requires a running [Ollama](https://ollama.com) server at `http://localhost:11434`.
@@ -97,7 +139,11 @@ YS1::Ollama.request("Give me one fun fact about Ruby.", model: "gemma4")
 #=> "Ruby was created by Yukihiro Matsumoto."
 
 # Streaming (yields chunks and returns the full text)
-YS1::Ollama.stream("Tell me a short story.", model: "gemma4") { |chunk| print chunk }
+YS1::Ollama.stream("Tell me a short story.") { |chunk| print chunk }
+
+# Structured extraction (returns parsed JSON)
+YS1::Ollama::Extract.from_text(%({"name": string}), "I'm Taro.")
+#=> {"name" => "Taro"}
 
 # OCR: extract the text from an image
 YS1::Ollama::OCR.from_file("scan.png", model: "gemma4")
@@ -113,11 +159,13 @@ affect each other. `YS1::Ollama::DEFAULT_MODEL` is used when `model:` is omitted
 The command-line entry points are installed as executables:
 
 ```sh
-ys1 "Tell me a short story."      # stream a response
-ys1-ocr scan.png                  # OCR an image
-ys1-trans English "こんにちは"      # translate text
-ys1-agg ips.txt                   # aggregate IPv4 addresses into ACL entries
+ys1 "Tell me one fun fact about Ruby."   # stream (use -f json for JSON, -m MODEL)
+ys1-ocr scan.png                        # OCR an image (-m MODEL)
+ys1-trans English "こんにちは"            # translate text (stdin when TEXT omitted)
+ys1-agg ips.txt                          # aggregate IPv4 addresses into ACL rules
 ```
+
+Every command supports `-h`/`--help` for its full list of options.
 
 ## Contributing
 

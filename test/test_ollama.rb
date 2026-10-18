@@ -50,4 +50,12 @@ class TestYS1Ollama < Minitest::Test
   def test_has_no_global_mutable_state
     refute_respond_to YS1::Ollama, :data
   end
+
+  def test_extract_prompt_template
+    prompt = YS1::Ollama::Extract.prompt_template("name, age", "Taro is 20")
+
+    assert_includes prompt, "name, age"
+    assert_includes prompt, "Taro is 20"
+    assert_includes prompt, "JSON"
+  end
 end

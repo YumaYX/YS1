@@ -3,10 +3,10 @@
 require_relative("helper")
 
 class TestYS1IPAggregator < Minitest::Test
-  def test_ip_to_u32_and_back
+  def test_to_u32_and_back
     ip = "192.168.1.1"
-    num = YS1::IP::Aggregator.ip_to_u32(ip)
-    back = YS1::IP::Aggregator.u32_to_ip(num)
+    num = YS1::IP::Aggregator.to_u32(ip)
+    back = YS1::IP::Aggregator.from_u32(num)
 
     assert_equal(ip, back)
   end
@@ -23,7 +23,7 @@ class TestYS1IPAggregator < Minitest::Test
 
   def test_aggregate_single_ip
     ips = ["10.0.0.1"]
-    cidrs = YS1::IP::Aggregator.aggregate_ips(ips)
+    cidrs = YS1::IP::Aggregator.aggregate(ips)
 
     assert_equal(1, cidrs.length)
     assert_equal("10.0.0.1", cidrs[0].addr)
@@ -32,7 +32,7 @@ class TestYS1IPAggregator < Minitest::Test
 
   def test_aggregate_basic_range
     ips = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4"]
-    cidrs = YS1::IP::Aggregator.aggregate_ips(ips)
+    cidrs = YS1::IP::Aggregator.aggregate(ips)
 
     assert_equal(3, cidrs.length)
     assert_equal("10.0.0.1", cidrs[0].addr)
@@ -41,7 +41,7 @@ class TestYS1IPAggregator < Minitest::Test
 
   def test_aggregate_full_range
     ips = (1..8).map { |i| "10.0.0.#{i}" }
-    cidrs = YS1::IP::Aggregator.aggregate_ips(ips)
+    cidrs = YS1::IP::Aggregator.aggregate(ips)
 
     assert_equal(4, cidrs.length)
     assert_equal("10.0.0.1", cidrs[0].addr)
@@ -53,7 +53,7 @@ class TestYS1IPAggregator < Minitest::Test
 
   def test_aggregate_with_gaps
     ips = ["10.0.0.1", "10.0.0.2", "10.0.0.4"]
-    cidrs = YS1::IP::Aggregator.aggregate_ips(ips)
+    cidrs = YS1::IP::Aggregator.aggregate(ips)
 
     assert_equal(3, cidrs.length)
 
@@ -66,20 +66,20 @@ class TestYS1IPAggregator < Minitest::Test
 
   def test_aggregate_unaligned
     ips = ["10.0.0.2", "10.0.0.3"]
-    cidrs = YS1::IP::Aggregator.aggregate_ips(ips)
+    cidrs = YS1::IP::Aggregator.aggregate(ips)
 
     assert_equal(1, cidrs.length)
     assert_equal("10.0.0.2", cidrs[0].addr)
     assert_equal(31, cidrs[0].prefix)
   end
 
-  def test_cidrs_to_acl
+  def test_to_acl
     raw = [
       YS1::IP::Cidr.new("10.0.0.1", 32),
       YS1::IP::Cidr.new("10.0.0.0", 24)
     ]
 
-    acl = YS1::IP::Aggregator.cidrs_to_acl(raw)
+    acl = YS1::IP::Aggregator.to_acl(raw)
 
     expected = ["host 10.0.0.1", "10.0.0.0 255.255.255.0"]
 

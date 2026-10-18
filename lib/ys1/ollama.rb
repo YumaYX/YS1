@@ -30,9 +30,9 @@ module YS1
       # @return [Net::HTTPResponse] raw HTTP response
       #
       # @example
-      #   response = YS1::Ollama.request_response("hi", model: "gemma4")
+      #   response = YS1::Ollama.response("hi", model: "gemma4")
       #   response.code # => "200"
-      def request_response(prompt, model: DEFAULT_MODEL, options: {}, **extra)
+      def response(prompt, model: DEFAULT_MODEL, options: {}, **extra)
         body = Request.generate_body(prompt, model: model, options: options, **extra)
 
         Request.post(GENERATE_URL, body)
@@ -50,9 +50,9 @@ module YS1
       #   YS1::Ollama.request("hi", model: "gemma4")
       #   # => "Hello! How can I help you today?"
       def request(prompt, model: DEFAULT_MODEL, options: {}, **extra)
-        response = request_response(prompt, model: model, options: options, **extra)
+        raw = response(prompt, model: model, options: options, **extra)
 
-        JSON.parse(response.body).fetch("response")
+        JSON.parse(raw.body).fetch("response")
       end
 
       # Streams a response from the Ollama chat endpoint.

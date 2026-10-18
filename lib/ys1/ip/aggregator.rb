@@ -7,7 +7,7 @@ module YS1
   module IP
     # Provides functionality to aggregate IPv4 addresses into CIDR blocks.
     #
-    # Only {.aggregate_ips}, {.cidrs_to_acl} and the integer/string
+    # Only {.aggregate}, {.to_acl} and the integer/string
     # conversions are public; the block-detection helpers are implementation
     # details.
     module Aggregator
@@ -18,9 +18,9 @@ module YS1
         # @return [Integer] 32-bit integer representation
         #
         # @example
-        #   YS1::IP::Aggregator.ip_to_u32("0.0.0.1")
+        #   YS1::IP::Aggregator.to_u32("0.0.0.1")
         #   # => 1
-        def ip_to_u32(ip)
+        def to_u32(ip)
           IPAddr.new(ip).to_i
         end
 
@@ -30,9 +30,9 @@ module YS1
         # @return [String] IPv4 address string
         #
         # @example
-        #   YS1::IP::Aggregator.u32_to_ip(1)
+        #   YS1::IP::Aggregator.from_u32(1)
         #   # => "0.0.0.1"
-        def u32_to_ip(number)
+        def from_u32(number)
           IPAddr.new(number, Socket::AF_INET).to_s
         end
 
@@ -42,9 +42,9 @@ module YS1
         # @return [Array<Cidr>] Aggregated CIDR blocks
         #
         # @example
-        #   YS1::IP::Aggregator.aggregate_ips(%w[10.0.0.2 10.0.0.3]).map(&:to_s)
+        #   YS1::IP::Aggregator.aggregate(%w[10.0.0.2 10.0.0.3]).map(&:to_s)
         #   # => ["10.0.0.2/31"]
-        def aggregate_ips(ip_list)
+        def aggregate(ip_list)
           ints = normalize(ip_list)
 
           result = []
@@ -66,9 +66,9 @@ module YS1
         #
         # @example
         #   cidrs = [YS1::IP::Cidr.new("10.0.0.1", 32)]
-        #   YS1::IP::Aggregator.cidrs_to_acl(cidrs)
+        #   YS1::IP::Aggregator.to_acl(cidrs)
         #   # => ["host 10.0.0.1"]
-        def cidrs_to_acl(raw)
+        def to_acl(raw)
           raw.map do |c|
             if c.prefix.eql?(32)
               "host #{c.addr}"
@@ -102,7 +102,7 @@ module YS1
         # @param ip_list [Array<String>] List of IPv4 address strings
         # @return [Array<Integer>] Sorted unique integer representations
         def normalize(ip_list)
-          ip_list.map { |ip| ip_to_u32(ip) }.sort.uniq
+          ip_list.map { |ip| to_u32(ip) }.sort.uniq
         end
 
         # Determine the largest valid CIDR block size starting at a given index
@@ -134,7 +134,7 @@ module YS1
           mask = prefix.zero? ? 0 : ((~0 << (32 - prefix)) & 0xffffffff)
           network = start & mask
 
-          YS1::IP::Cidr.new(u32_to_ip(network), prefix)
+          YS1::IP::Cidr.new(from_u32(network), prefix)
         end
       end
     end

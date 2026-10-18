@@ -54,4 +54,41 @@ class TestYS1IP < Minitest::Test
       YS1::IP::Cidr.new("192.168.1.0", 33)
     end
   end
+
+  def test_include_true
+    assert YS1::IP.include?("10.0.0.0/24", "10.0.0.5")
+  end
+
+  def test_include_false
+    refute YS1::IP.include?("10.0.0.0/24", "10.0.1.5")
+  end
+
+  def test_include_with_cidr_object
+    cidr = YS1::IP::Cidr.new("10.0.0.0", 24)
+
+    assert YS1::IP.include?(cidr, "10.0.0.99")
+  end
+
+  def test_private_true
+    assert YS1::IP.private?("192.168.1.1")
+    assert YS1::IP.private?("10.1.2.3")
+    assert YS1::IP.private?("127.0.0.1")
+    assert YS1::IP.private?("169.254.0.1")
+  end
+
+  def test_private_false
+    refute YS1::IP.private?("8.8.8.8")
+    refute YS1::IP.private?("1.1.1.1")
+  end
+
+  def test_private_ipv6
+    assert YS1::IP.private?("::1")
+    assert YS1::IP.private?("fd00::1")
+    refute YS1::IP.private?("2001:4860:4860::8888")
+  end
+
+  def test_version
+    assert_equal 4, YS1::IP.version("192.168.1.1")
+    assert_equal 6, YS1::IP.version("::1")
+  end
 end

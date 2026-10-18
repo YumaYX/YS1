@@ -1,9 +1,40 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require "optparse"
 require "ys1"
 
-file_name = ARGV.first || "ips.txt"
-ips = File.read(file_name).lines.map(&:chomp).reject(&:empty?)
-raw = YS1::IP::Aggregator.aggregate_ips(ips)
-puts YS1::IP::Aggregator.cidrs_to_acl(raw)
+options = { input: nil, output: nil }
+
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: ys1-agg [options] [FILE]"
+  opts.separator ""
+  opts.separator "Aggregates a list of IPv4 addresses or CIDRs into ACL rules."
+  opts.separator "Reads from FILE, or stdin when FILE is omitted or '-'."
+  opts.separator ""
+  opts.on("-i", "--input FILE", "Input file with one IP/CIDR per line") { |v| options[:input] = v }
+  opts.on("-o", "--output FILE", "Write the ACL to FILE instead of stdout") { |v| options[:output] = v }
+  opts.on("-h", "--help", "Show this help") do
+    puts opts
+    exit
+  end
+end
+
+parser.parse!(ARGV)
+path = options[:input] || ARGV.first
+
+source = path.nil? || path == "-" ? $stdin : File.open(path)
+begin
+  ips = source.read.lines.map(&:chomp).reject(&:empty?)
+ensure
+  source.close if source.is_a?(File)
+end
+
+raw = YS1::IP::Aggregator.aggregate(ips)
+acl = YS1::IP::Aggregator.to_acl(raw)
+
+if options[:output]
+  File.write(options[:output], acl)
+else
+  puts acl
+end

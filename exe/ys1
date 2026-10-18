@@ -1,11 +1,40 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require "optparse"
 require "ys1"
 
-if ARGV.empty?
-  warn "Usage: ys1 PROMPT"
+options = { model: YS1::Ollama::DEFAULT_MODEL, format: "text" }
+
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: ys1 [options] [PROMPT]"
+  opts.separator ""
+  opts.separator "Streams a response from a local Ollama server."
+  opts.separator "Reads the prompt from stdin when PROMPT is omitted."
+  opts.separator ""
+  opts.on("-m", "--model MODEL", "Ollama model name (default: #{options[:model]})") { |v| options[:model] = v }
+  opts.on("-f", "--format FORMAT", %w[text json], "Output format: text or json (default: text)") do |v|
+    options[:format] = v
+  end
+  opts.on("-h", "--help", "Show this help") do
+    puts opts
+    exit
+  end
+end
+
+parser.parse!(ARGV)
+prompt = ARGV.join(" ")
+prompt = $stdin.read if prompt.empty?
+
+if prompt.strip.empty?
+  warn parser.help
   exit 1
 end
 
-YS1::Ollama.stream(ARGV.join(" ")) { |chunk| print chunk }
+case options[:format]
+when "json"
+  puts YS1::Ollama.response(prompt, model: options[:model]).body
+else
+  YS1::Ollama.stream(prompt, model: options[:model]) { |chunk| print chunk }
+  puts
+end

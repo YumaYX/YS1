@@ -8,8 +8,11 @@ module YS1
       # Generate the Cartesian product of multiple arrays.
       #
       # @param arrays [Array<Array>] arrays to be joined
+      # @param limit [Integer, nil] maximum number of combinations to emit
       # @yieldparam combo [Array] one combination of elements
       # @return [Enumerator] when no block is given
+      #
+      # @raise [ArgumentError] if limit is negative
       #
       # @example Basic usage
       #   YS1::Join.cross([1, 2], [:a, :b]).to_a
@@ -20,22 +23,46 @@ module YS1
       #     p combo
       #   end
       #
+      # @example With a limit
+      #   YS1::Join.cross([1, 2], [:a, :b], limit: 2).to_a
+      #   # => [[1, :a], [1, :b]]
+      #
       # @example No arguments
       #   YS1::Join.cross.to_a
       #   # => [[]]
-      def cross(*arrays, &block)
-        return enum_for(__method__, *arrays) unless block_given?
+      def cross(*arrays, limit: nil, &block)
+        raise ArgumentError, "limit must not be negative" if limit&.negative?
+        return enum_for(__method__, *arrays, limit: limit) unless block_given?
 
-        if arrays.empty?
-          yield []
-          return
+        return yield([]) if arrays.empty?
+
+        emit(product(arrays), limit, &block)
+      end
+
+      # Builds the eager Cartesian product of the given arrays.
+      #
+      # @param arrays [Array<Array>] arrays to multiply
+      # @return [Array<Array>] every combination
+      def product(arrays)
+        arrays.reduce([[]]) do |acc, arr|
+          acc.product(arr).map { |prefix, item| prefix + [item] }
         end
+      end
 
-        arrays
-          .reduce([[]]) do |acc, arr|
-            acc.product(arr).map { |prefix, item| prefix + [item] }
-          end
-          .each(&block)
+      # Yields combinations, stopping once +limit+ is reached.
+      #
+      # @param combinations [Array<Array>] combinations to yield
+      # @param limit [Integer, nil] maximum count, or nil for no limit
+      # @yieldparam combo [Array] one combination
+      # @return [void]
+      def emit(combinations, limit)
+        count = 0
+        combinations.each do |combo|
+          break if limit && count >= limit
+
+          yield combo
+          count += 1
+        end
       end
 
       #
@@ -45,6 +72,7 @@ module YS1
       # then passed to {.cross}.
       #
       # @param filenames [Array<String>] file paths
+      # @param limit [Integer, nil] maximum number of combinations to emit
       # @yieldparam combo [Array<String>] one combination of lines
       # @return [Enumerator] when no block is given
       #
@@ -59,12 +87,12 @@ module YS1
       #
       #   YS1::Join.cross_from_files("a.txt", "b.txt").to_a
       #   # => [["1", "a"], ["1", "b"], ["2", "a"], ["2", "b"]]
-      def cross_from_files(*filenames, &block)
+      def cross_from_files(*filenames, limit: nil, &block)
         arrays = filenames.map do |filename|
           File.readlines(filename, chomp: true)
         end
 
-        cross(*arrays, &block)
+        cross(*arrays, limit: limit, &block)
       end
     end
   end

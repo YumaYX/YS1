@@ -36,5 +36,40 @@ module YS1
     def family
       [@parent] + @children
     end
+
+    # Renders the parent and children as an indented outline.
+    #
+    # The parent is printed first, then each child on its own line indented
+    # by one level. Nested {ParentAndChild} values are rendered recursively.
+    #
+    # @param indent [String] the string used for one indentation level
+    # @return [String] the outline without a trailing newline
+    #
+    # @example
+    #   pac = YS1::ParentAndChild.new("Parent")
+    #   pac.add_child("Child A", "Child B")
+    #   puts pac.to_tree
+    #   # Parent
+    #   #   Child A
+    #   #   Child B
+    def to_tree(indent: "  ")
+      [@parent.to_s, *@children.map { |child| render_child(child, indent, 1) }].join("\n")
+    end
+
+    private
+
+    # Renders a single child at the given depth.
+    #
+    # @param child [Object] the child value
+    # @param indent [String] one indentation level
+    # @param depth [Integer] the current depth
+    # @return [String]
+    def render_child(child, indent, depth)
+      if child.is_a?(YS1::ParentAndChild)
+        child.to_tree(indent: indent).lines.map { |line| "#{indent * depth}#{line.chomp}" }.join("\n")
+      else
+        "#{indent * depth}#{child}"
+      end
+    end
   end
 end
