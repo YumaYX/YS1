@@ -33,39 +33,16 @@ module YS1
 
         ::CSV.open(file_path, "w") do |csv|
           if rows.first.is_a?(Hash)
-            write_hashes(csv, rows, headers)
+            keys = (headers || rows.first.keys).map(&:to_s)
+            csv << keys
+            rows.each { |row| csv << keys.map { |key| row[key] } }
           else
-            write_arrays(csv, rows, headers)
+            csv << headers if headers
+            rows.each { |row| csv << row }
           end
         end
 
         nil
-      end
-
-      private
-
-      # Writes an array of hashes, using the given headers or the first
-      # hash's keys.
-      #
-      # @param csv [::CSV] open CSV writer
-      # @param rows [Array<Hash>] rows to write
-      # @param headers [Array<String>, nil] column order
-      # @return [void]
-      def write_hashes(csv, rows, headers)
-        keys = (headers || rows.first.keys).map(&:to_s)
-        csv << keys
-        rows.each { |row| csv << keys.map { |key| row[key] } }
-      end
-
-      # Writes an array of arrays, optionally preceded by a header row.
-      #
-      # @param csv [::CSV] open CSV writer
-      # @param rows [Array<Array>] rows to write
-      # @param headers [Array<String>, nil] header row
-      # @return [void]
-      def write_arrays(csv, rows, headers)
-        csv << headers if headers
-        rows.each { |row| csv << row }
       end
     end
 
