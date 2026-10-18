@@ -34,30 +34,12 @@ module YS1
         raise ArgumentError, "limit must not be negative" if limit&.negative?
         return enum_for(__method__, *arrays, limit: limit) unless block_given?
 
-        return yield([]) if arrays.empty?
-
-        emit(product(arrays), limit, &block)
-      end
-
-      # Builds the eager Cartesian product of the given arrays.
-      #
-      # @param arrays [Array<Array>] arrays to multiply
-      # @return [Array<Array>] every combination
-      def product(arrays)
-        arrays.reduce([[]]) do |acc, arr|
+        combos = arrays.reduce([[]]) do |acc, arr|
           acc.product(arr).map { |prefix, item| prefix + [item] }
         end
-      end
 
-      # Yields combinations, stopping once +limit+ is reached.
-      #
-      # @param combinations [Array<Array>] combinations to yield
-      # @param limit [Integer, nil] maximum count, or nil for no limit
-      # @yieldparam combo [Array] one combination
-      # @return [void]
-      def emit(combinations, limit)
         count = 0
-        combinations.each do |combo|
+        combos.each do |combo|
           break if limit && count >= limit
 
           yield combo

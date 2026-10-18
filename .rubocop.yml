@@ -12,3 +12,16 @@ Security/MarshalLoad:
   Exclude:
     - lib/ys1/report.rb
 
+# Prefer a single readable method over splitting purely to hit metrics.
+Metrics/AbcSize:
+  Max: 25
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/MethodLength:
+  Max: 20
+
+Metrics/PerceivedComplexity:
+  Max: 12
+
