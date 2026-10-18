@@ -54,32 +54,16 @@ module YS1
       #   the cell matrix and whether the first row is a header
       def build_matrix(rows, headers)
         return [[headers.map(&:to_s)], true] if rows.empty?
-        return hash_matrix(rows, headers) if rows.first.is_a?(Hash)
 
-        array_matrix(rows, headers)
-      end
-
-      # Builds the matrix for an array of hashes.
-      #
-      # @param rows [Array<Hash>]
-      # @param headers [Array<String>, nil]
-      # @return [Array(Array<Array<String>>, Boolean)]
-      def hash_matrix(rows, headers)
-        keys = headers || rows.first.keys
-        body = rows.map { |row| keys.map { |key| row[key].to_s } }
-        [[keys.map(&:to_s), *body], true]
-      end
-
-      # Builds the matrix for an array of arrays.
-      #
-      # @param rows [Array<Array>]
-      # @param headers [Array<String>, nil]
-      # @return [Array(Array<Array<String>>, Boolean)]
-      def array_matrix(rows, headers)
-        body = rows.map { |row| row.map(&:to_s) }
-        return [[headers.map(&:to_s), *body], true] if headers
-
-        [body, false]
+        if rows.first.is_a?(Hash)
+          keys = headers || rows.first.keys
+          body = rows.map { |row| keys.map { |key| row[key].to_s } }
+          [[keys.map(&:to_s), *body], true]
+        elsif headers
+          [[headers.map(&:to_s), *rows.map { |row| row.map(&:to_s) }], true]
+        else
+          [rows.map { |row| row.map(&:to_s) }, false]
+        end
       end
 
       # Computes the maximum display width of each column.

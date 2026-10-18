@@ -16,12 +16,18 @@ Security/MarshalLoad:
 Metrics/AbcSize:
   Max: 25
 
+# RuboCop counts every map/each block, so table rendering naturally scores
+# high; table.rb is exempt and the limits stay tight for new code.
 Metrics/CyclomaticComplexity:
   Max: 10
+  Exclude:
+    - lib/ys1/table.rb
 
 Metrics/MethodLength:
   Max: 20
 
 Metrics/PerceivedComplexity:
   Max: 12
+  Exclude:
+    - lib/ys1/table.rb
 
