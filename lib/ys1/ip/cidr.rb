@@ -19,6 +19,7 @@ module YS1
       # Returns the IP address string part of the CIDR block.
       # @return [String] The IP address string.
       def addr = @ip.to_s
+
       attr_reader :prefix
 
       # Converts the CIDR object into its standard string representation (e.g., "192.168.1.0/24").

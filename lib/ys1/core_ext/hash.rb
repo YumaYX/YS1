@@ -20,15 +20,13 @@ class Hash
   #   obj.age  #=> 30
   #
   def to_anon_class
-    source = self
+    hash = self
 
     Class.new do
-      source.each_key { |key| attr_accessor key.to_sym }
+      hash.each_key { |key| attr_accessor key }
 
       define_method(:initialize) do
-        source.each do |key, value|
-          instance_variable_set("@#{key}", value)
-        end
+        hash.each { |key, value| instance_variable_set("@#{key}", value) }
       end
     end
   end

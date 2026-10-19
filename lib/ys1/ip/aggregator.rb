@@ -47,7 +47,6 @@ module YS1
         # @return [Array<Cidr>] Aggregated CIDR blocks
         def aggregate_ips(ip_list)
           ints = normalize(ip_list)
-
           result = []
           i = 0
 
@@ -79,7 +78,7 @@ module YS1
           loop do
             next_size = size * 2
             block = ints[index, next_size]
-            break if (index + next_size > ints.length) || !continuous?(block) || !aligned?(block[0], next_size)
+            break unless valid_block?(block, index, next_size, ints.length)
 
             size = next_size
           end
@@ -100,17 +99,24 @@ module YS1
           YS1::IP::Cidr.new(u32_to_ip(network), prefix)
         end
 
+        # Check if a block is valid for aggregation
+        #
+        # @param block [Array<Integer>] Candidate block
+        # @param index [Integer] Starting index
+        # @param next_size [Integer] Candidate block size
+        # @param total [Integer] Total number of IPs
+        # @return [Boolean] True if block is within bounds, continuous, and aligned
+        def valid_block?(block, index, next_size, total)
+          index + next_size <= total && continuous?(block) && aligned?(block[0], next_size)
+        end
+
         # Convert CIDR blocks into ACL format
         #
         # @param raw [Array<Cidr>] List of CIDR objects
         # @return [Array<String>] ACL-formatted
         def cidrs_to_acl(raw)
           raw.map do |c|
-            if c.prefix.eql?(32)
-              "host #{c.addr}"
-            else
-              "#{c.addr} #{YS1::IP.netmask(c.prefix)}"
-            end
+            c.prefix.eql?(32) ? "host #{c.addr}" : "#{c.addr} #{YS1::IP.netmask(c.prefix)}"
           end
         end
       end

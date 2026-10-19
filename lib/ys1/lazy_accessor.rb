@@ -24,8 +24,6 @@ module YS1
   #   # => 20
   #
   module LazyAccessor
-    # rubocop:disable Metrics/MethodLength
-
     #
     # Dynamically defines getter/setter methods.
     #
@@ -38,26 +36,10 @@ module YS1
     # @return [Object]
     #
     def method_missing(name, *args)
-      str        = name.to_s
-      setter     = str.end_with?("=")
-      attr_name  = str.delete_suffix("=").to_sym
-      ivar_name  = :"@#{attr_name}"
+      attr_name, ivar_name = parse_name(name)
+      define_accessors(attr_name, ivar_name)
 
-      #
-      # define getter
-      #
-      define_singleton_method(attr_name) do
-        instance_variable_get(ivar_name)
-      end
-
-      #
-      # define setter
-      #
-      define_singleton_method("#{attr_name}=") do |value|
-        instance_variable_set(ivar_name, value)
-      end
-
-      if setter
+      if name.to_s.end_with?("=")
         public_send(name, args.first)
       elsif instance_variable_defined?(ivar_name)
         public_send(name)
@@ -65,7 +47,6 @@ module YS1
         super
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     #
     # Checks whether dynamic methods are supported.
@@ -87,6 +68,31 @@ module YS1
       return true if setter
 
       instance_variable_defined?(ivar_name) || super
+    end
+
+    private
+
+    # Parses a method name into attribute and instance variable names.
+    #
+    # @param name [Symbol] method name
+    # @return [Array<Symbol, Symbol>] attribute name and ivar name
+    def parse_name(name)
+      attr_name = name.to_s.delete_suffix("=").to_sym
+      [attr_name, :"@#{attr_name}"]
+    end
+
+    # Defines singleton getter and setter methods for the given attribute.
+    #
+    # @param attr_name [Symbol] attribute name
+    # @param ivar_name [Symbol] instance variable name
+    def define_accessors(attr_name, ivar_name)
+      define_singleton_method(attr_name) do
+        instance_variable_get(ivar_name)
+      end
+
+      define_singleton_method("#{attr_name}=") do |value|
+        instance_variable_set(ivar_name, value)
+      end
     end
   end
 end

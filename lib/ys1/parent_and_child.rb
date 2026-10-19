@@ -14,7 +14,7 @@ module YS1
     #
     # @param parent [Object] The parent object.
     def initialize(parent)
-      @parent   = parent
+      @parent = parent
       @children = []
     end
 
@@ -23,13 +23,7 @@ module YS1
     #
     # @param child The child objects to be added.
     def add_child(*child)
-      child.each do |element|
-        if element.is_a?(Array)
-          add_child(*element)
-        else
-          @children << element
-        end
-      end
+      children.concat(child.flatten)
     end
 
     #
@@ -37,7 +31,7 @@ module YS1
     #
     # @return [Array<Object>] The array representing the family.
     def family
-      [@parent] + @children
+      [parent, *children]
     end
   end
 end
