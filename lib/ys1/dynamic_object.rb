@@ -69,8 +69,8 @@ module YS1
 
       if str.end_with?("=")
         data[key] = args.first
-      elsif data.key?(name.to_sym)
-        data[name.to_sym]
+      elsif data.key?(key)
+        data[key]
       else
         super
       end

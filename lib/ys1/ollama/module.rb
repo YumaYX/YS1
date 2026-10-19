@@ -34,9 +34,7 @@ module YS1
         # @param url [URI::HTTP, URI::HTTPS] target endpoint
         # @return [Net::HTTP] configured HTTP client
         def build_http(url)
-          Net::HTTP.new(url.host, url.port).tap do |http|
-            http.read_timeout = nil
-          end
+          Net::HTTP.new(url.host, url.port).tap { |http| http.read_timeout = nil }
         end
 
         # Builds HTTP POST request.
@@ -45,15 +43,9 @@ module YS1
         # @param data [Hash] request body
         # @return [Net::HTTP::Post] HTTP request object
         def build_request(url, data)
-          Net::HTTP::Post.new(
-            url.path,
-            { "Content-Type" => "application/json" }
-          ).tap do |req|
-            req.body = data.to_json
-          end
+          Net::HTTP::Post.new(url.path, { "Content-Type" => "application/json" })
+                         .tap { |req| req.body = data.to_json }
         end
-
-        # rubocop:disable Metrics/MethodLength
 
         # Executes streaming request and processes response chunks.
         #
@@ -62,28 +54,34 @@ module YS1
         # @yieldparam content [String] streamed response content
         # @return [String] accumulated full response
         # @raise [RuntimeError] when HTTP or JSON parsing fails
-        def execute(http, request)
+        def execute(http, request, &on_chunk)
           full_response = +""
           buffer = +""
 
-          http.request(request) do |res|
-            validate!(res)
-
-            res.read_body do |chunk|
-              process_chunk(chunk, buffer, full_response) do |content|
-                yield content if block_given?
-              end
-            end
-          end
+          consume(http, request, buffer, full_response, &on_chunk)
 
           full_response
         rescue StandardError => e
           puts "\n[FATAL ERROR] #{e.class}: #{e.message}"
           raise
         end
-        # rubocop:enable Metrics/MethodLength
 
         private
+
+        # Streams the HTTP response body, feeding chunks to {#process_chunk}.
+        #
+        # @param http [Net::HTTP] configured HTTP client
+        # @param request [Net::HTTP::Post] HTTP request
+        # @param buffer [String] streaming buffer
+        # @param full_response [String] accumulated response
+        # @yieldparam content [String] streamed response content
+        # @return [void]
+        def consume(http, request, buffer, full_response, &block)
+          http.request(request) do |res|
+            validate!(res)
+            res.read_body { |chunk| process_chunk(chunk, buffer, full_response, &block) }
+          end
+        end
 
         # Builds common request payload.
         #
@@ -92,12 +90,8 @@ module YS1
         # @param extra [Hash] additional payload fields
         # @return [Hash] merged payload
         def build_payload(data, stream:, **extra)
-          JSON.parse(data.data.to_json).merge(
-            {
-              "stream" => stream,
-              "options" => data.options.data
-            }.merge(extra.transform_keys(&:to_s))
-          )
+          options = { "stream" => stream, "options" => data.options.data }
+          JSON.parse(data.data.to_json).merge(options.merge(extra.transform_keys(&:to_s)))
         end
 
         # Processes streamed chunks line-by-line.
@@ -107,7 +101,7 @@ module YS1
         # @param full_response [String] accumulated response
         # @yieldparam content [String] streamed content
         # @return [void]
-        def process_chunk(chunk, buffer, full_response)
+        def process_chunk(chunk, buffer, full_response, &block)
           return unless chunk
 
           buffer << chunk
@@ -115,11 +109,7 @@ module YS1
           while (line = buffer.slice!(/.*\n/))
             next if line.strip.empty?
 
-            done = process_line?(line, full_response) do |content|
-              yield content if block_given?
-            end
-
-            break if done
+            break if process_line?(line, full_response, &block)
           end
         end
 
@@ -130,14 +120,12 @@ module YS1
         # @yieldparam content [String] streamed content
         # @return [Boolean] whether streaming is complete
         # @raise [RuntimeError] when Ollama returns an error
-        def process_line?(line, full_response)
+        def process_line?(line, full_response, &block)
           json = parse_json(line)
 
           raise "Ollama Error: #{json["error"]}" if json["error"]
 
-          append_content(json, full_response) do |content|
-            yield content if block_given?
-          end
+          append_content(json, full_response, &block)
 
           json["done"] == true
         end
@@ -148,16 +136,15 @@ module YS1
         # @param full_response [String] accumulated response
         # @yieldparam content [String] streamed content
         # @return [void]
-        def append_content(json, full_response)
+        def append_content(json, full_response, &block)
           content = json.dig("message", "content")
           return unless content
 
           full_response << content
-
           print content
           $stdout.flush
 
-          yield content if block_given?
+          block&.call(content)
         end
 
         # Parses JSON response line safely.

@@ -25,11 +25,7 @@ module YS1
     # @return [Array<Hash>] An array of hashes representing the CSV rows.
     def read
       @data = ::CSV
-              .read(
-                @file_path,
-                encoding: "BOM|UTF-8",
-                headers: true
-              )
+              .read(file_path, encoding: "BOM|UTF-8", headers: true)
               .map(&:to_h)
     end
 
@@ -38,7 +34,7 @@ module YS1
     # @return [String] A JSON formatted string of the CSV data.
     def to_json(*_args)
       @data ||= read
-      JSON.generate(@data)
+      JSON.generate(data)
     end
   end
 end

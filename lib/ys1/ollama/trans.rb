@@ -30,8 +30,7 @@ module YS1
         # @return [void] Streams the result of the translation.
         def into(lang, text)
           YS1::Ollama.data.options.temperature = 0.4
-          prompt = prompt_template(lang, text)
-          YS1::Ollama.stream(prompt)
+          YS1::Ollama.stream(prompt_template(lang, text))
         end
       end
     end

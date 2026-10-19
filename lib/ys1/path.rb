@@ -15,9 +15,7 @@ module YS1
       #   YS1::Path.file_list("lib/**/*.rb", ["spec/**/*.rb"])
       #
       def file_list(*objs)
-        fl = Rake::FileList.new
-        fl.include(objs)
-        fl.to_a
+        Rake::FileList.new.tap { |fl| fl.include(objs) }.to_a
       end
     end
   end

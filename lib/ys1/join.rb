@@ -26,15 +26,10 @@ module YS1
       def cross(*arrays, &block)
         return enum_for(__method__, *arrays) unless block_given?
 
-        if arrays.empty?
-          yield []
-          return
-        end
+        return yield([]) if arrays.empty?
 
         arrays
-          .reduce([[]]) do |acc, arr|
-            acc.product(arr).map { |prefix, item| prefix + [item] }
-          end
+          .reduce([[]]) { |acc, arr| acc.product(arr).map { |prefix, item| prefix + [item] } }
           .each(&block)
       end
 

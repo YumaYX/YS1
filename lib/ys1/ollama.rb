@@ -10,6 +10,11 @@ require_relative "dynamic_object"
 module YS1
   # Namespace for interacting with the Ollama API
   module Ollama
+    # @return [String] Ollama generate endpoint
+    GENERATE_URL = "http://localhost:11434/api/generate"
+    # @return [String] Ollama chat endpoint
+    CHAT_URL = "http://localhost:11434/api/chat"
+
     class << self
       # @return [DynamicObject] the data for requests
       attr_accessor :data
@@ -19,15 +24,13 @@ module YS1
       # @param prompt [String] the input prompt
       # @return [Net::HTTPResponse] raw HTTP response
       def request_response(prompt)
-        url = URI.parse("http://localhost:11434/api/generate")
+        url = URI.parse(GENERATE_URL)
         http = Net::HTTP.new(url.host, url.port)
         http.open_timeout = nil
         http.read_timeout = nil
 
         request = Net::HTTP::Post.new(url.path, { "Content-Type" => "application/json" })
-
-        data = YS1::Ollama::Module.ollama_request_data(prompt, self.data)
-        request.body = data.to_json
+        request.body = YS1::Ollama::Module.ollama_request_data(prompt, data).to_json
 
         http.request(request)
       end
@@ -37,10 +40,8 @@ module YS1
       # @param prompt [String] the input prompt
       # @return [String] generated response text
       def request(prompt)
-        http_response = YS1::Ollama.request_response(prompt)
-        json = JSON.parse(http_response.body)
-
-        json.fetch("response")
+        http_response = request_response(prompt)
+        JSON.parse(http_response.body).fetch("response")
       end
 
       # Streams a response from the Ollama chat endpoint
@@ -49,8 +50,7 @@ module YS1
       # @yieldparam chunk [String] each streamed content chunk
       # @return [String] full accumulated response
       def stream(prompt, &on_chunk)
-        url = URI.parse("http://localhost:11434/api/chat")
-
+        url = URI.parse(CHAT_URL)
         http = YS1::Ollama::Module.build_http(url)
         request = YS1::Ollama::Module.build_request(url, YS1::Ollama::Module.request_body(prompt, data))
         YS1::Ollama::Module.execute(http, request, &on_chunk)

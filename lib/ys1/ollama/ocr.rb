@@ -21,9 +21,7 @@ module YS1
         # @param path [String] The file path to the image.
         # @return [String] The Base64 encoded string of the image.
         def encode_image(path)
-          File.binread(path).then do |bin|
-            Base64.strict_encode64(bin)
-          end
+          Base64.strict_encode64(File.binread(path))
         end
 
         # Reads an image file, encodes it, sets up the context, and calls the Ollama API
