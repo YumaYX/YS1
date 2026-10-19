@@ -4,6 +4,17 @@ module YS1
   # Provides utility methods for extracting and processing
   # fenced code blocks (``` style) from a given text.
   module CodeBlock
+    # Removes surrounding Markdown-style code block fences from a string.
+    OPENING_FENCE = /\A[ \t]*```[a-zA-Z]*\n?/
+    # Removes trailing closing fence.
+    TRAILING_FENCE = /\n?```[ \t]*\z/
+    # Matches a line that is only a closing fence.
+    CLOSING_LINE = /^```\s*\z/
+    # Matches the opening fence line of a code block.
+    FENCE_OPEN_LINE = /\A.*?```[^\n]*\n/m
+    # Matches the closing fence of a code block.
+    FENCE_CLOSE = /```.*\z/m
+
     class << self
       # Removes surrounding Markdown-style code block fences from a string.
       #
@@ -26,11 +37,9 @@ module YS1
       #   # => "plain text"
       def strip_code_block(str)
         str
-          .sub(/\A[ \t]*```[a-zA-Z]*\n?/, "")
-          .sub(/\n?```[ \t]*\z/, "")
+          .sub(OPENING_FENCE, "")
+          .sub(TRAILING_FENCE, "")
       end
-
-      # rubocop:disable Metrics/MethodLength
 
       # Extracts all triple-backtick code blocks from the given text.
       #
@@ -45,20 +54,11 @@ module YS1
         buffer = nil
 
         text.each_line do |line|
-          if buffer
-            buffer << line
-            if line.match?(/^```\s*\z/)
-              blocks << buffer
-              buffer = nil
-            end
-          elsif line.start_with?("```")
-            buffer = line.to_s
-          end
+          buffer = process_line(line, blocks, buffer)
         end
 
         blocks
       end
-      # rubocop:enable Metrics/MethodLength
 
       # Returns the inner body of a code block, excluding the
       # opening and closing triple backtick lines.
@@ -70,7 +70,26 @@ module YS1
       def body(block)
         return nil if block.nil?
 
-        block.to_s.chomp.sub(/\A.*?```[^\n]*\n/m, "").sub(/```.*\z/m, "")
+        block.to_s.chomp.sub(FENCE_OPEN_LINE, "").sub(FENCE_CLOSE, "")
+      end
+
+      private
+
+      # Processes a single line during code block extraction.
+      #
+      # @param line [String] current line
+      # @param blocks [Array<String>] accumulated complete blocks
+      # @param buffer [String, nil] current in-progress block, or nil
+      # @return [String, nil] updated buffer state
+      def process_line(line, blocks, buffer)
+        return line if buffer.nil? && line.start_with?("```")
+        return buffer unless buffer
+
+        buffer << line
+        return buffer unless line.match?(CLOSING_LINE)
+
+        blocks << buffer
+        nil
       end
     end
   end
